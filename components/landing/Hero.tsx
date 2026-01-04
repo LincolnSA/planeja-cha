@@ -1,8 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Clock, Heart } from "lucide-react";
-import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export function Hero() {
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/dashboard" });
+  };
+
   return (
     <section className="w-full bg-background py-16 sm:py-24 lg:py-32">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,22 +39,12 @@ export function Hero() {
           {/* CTAs */}
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
-              asChild
+              onClick={handleSignIn}
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-base"
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-base cursor-pointer"
             >
-              <Link href="/signup" className="flex items-center gap-2">
-                Criar meu planejamento de chá
-                <Heart className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-green-600 text-green-600 hover:bg-green-50 px-8 py-6 text-base"
-            >
-              <Link href="/example">Ver exemplo</Link>
+              Entrar com Google para criar meu planejamento
+              <Heart className="h-4 w-4" />
             </Button>
           </div>
         </div>

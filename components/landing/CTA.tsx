@@ -1,8 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles } from "lucide-react";
-import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export function CTA() {
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/dashboard" });
+  };
+
   return (
     <section className="w-full bg-background py-16 sm:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,14 +38,12 @@ export function CTA() {
           {/* CTA Button */}
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
-              asChild
+              onClick={handleSignIn}
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-base"
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-base cursor-pointer"
             >
-              <Link href="/signup" className="flex items-center gap-2">
-                Criar meu planejamento de chá
-                <Heart className="h-4 w-4" />
-              </Link>
+              Entrar com Google para criar meu planejamento
+              <Heart className="h-4 w-4" />
             </Button>
             <p className="text-sm text-muted-foreground">
               Sem cartão de crédito necessário

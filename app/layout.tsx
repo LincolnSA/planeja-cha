@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,17 +25,19 @@ export const metadata: Metadata = {
     "Crie convites personalizados, gerencie sua lista de presentes e confirme a presença dos convidados — tudo em um só lugar.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+interface Props {
   children: React.ReactNode;
-}>) {
+}
+
+export default function RootLayout(props: Props) {
+  const { children } = props;
+
   return (
     <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}>
+        <SessionProvider>
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

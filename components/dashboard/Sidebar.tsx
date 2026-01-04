@@ -1,13 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Clock, BarChart3, Users, Gift, Settings, Copy, LogOut } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { EventSelector } from "@/components/dashboard/EventSelector";
 import { useContext } from "react";
+import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { Clock, BarChart3, Users, Gift, Settings, Copy, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { EventSelector } from "@/components/dashboard/EventSelector";
 import { EventContext } from "@/contexts/EventContext";
+import { cn } from "@/lib/utils";
 
 const navigation = [
   {
@@ -116,13 +117,15 @@ export function Sidebar() {
 
       {/* Logout */}
       <div className="border-t border-border p-4">
-        <Link
-          href="/logout"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full cursor-pointer"
+          onClick={async () => await signOut({ callbackUrl: "/" })}
         >
-          <LogOut className="h-5 w-5" />
-          Sair
-        </Link>
+          <LogOut className="h-3 w-3" />
+          Sair da conta
+        </Button>
       </div>
     </div>
   );

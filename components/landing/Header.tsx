@@ -1,8 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export function Header() {
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/dashboard" });
+  };
+
   return (
     <header className="w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -18,12 +25,14 @@ export function Header() {
 
         {/* Navigation */}
         <nav className="flex items-center gap-4">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
+          <Button
+            onClick={handleSignIn}
+            variant="outline"
+            size="sm"
+            className="border-green-600 text-green-600 hover:bg-green-50 px-4 py-3 text-base cursor-pointer"
           >
-            Entrar
-          </Link>
+            Entrar com Google
+          </Button>
         </nav>
       </div>
     </header>

@@ -1,12 +1,21 @@
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MobileSidebar } from "@/components/dashboard/MobileSidebar";
 import { EventProvider } from "@/contexts/EventContext";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function DashboardLayout({
-  children,
-}: {
+interface Props {
   children: React.ReactNode;
-}) {
+}
+
+export default async function DashboardLayout(props: Props) {
+  const { children } = props;
+  const session = await auth();
+
+  if (!session) {
+    redirect("/");
+  }
+
   return (
     <EventProvider>
       <div className="flex h-screen overflow-hidden">
