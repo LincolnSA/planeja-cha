@@ -15,23 +15,24 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-green-600">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-green-600 shrink-0">
             <Clock className="h-5 w-5 text-white" />
           </div>
-          <span className="text-xl font-semibold text-foreground">
+          <span className="text-lg sm:text-xl font-semibold text-foreground">
             Planeja Chá
           </span>
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-2 sm:gap-4">
           <Button
             onClick={handleSignIn}
             variant="outline"
             size="sm"
-            className="border-green-600 text-green-600 hover:bg-green-50 px-4 py-3 text-base cursor-pointer"
+            className="border-green-600 text-green-600 hover:bg-green-50 px-2 py-2 text-xs sm:px-4 sm:py-3 sm:text-sm cursor-pointer whitespace-nowrap"
           >
-            Entrar com Google
+            <span className="hidden sm:inline">Entrar com Google</span>
+            <span className="sm:hidden">Entrar</span>
           </Button>
         </nav>
       </div>

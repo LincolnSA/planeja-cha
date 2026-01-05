@@ -28,6 +28,7 @@ import { confirmPresenceAndSelectGifts } from "@/actions/guest";
 import type { PublicTea } from "@/actions/tea/get-tea-public";
 import type { Gift } from "@/actions/gift";
 import { useToast } from "@/components/ui/toast";
+import { Footer } from "@/components/landing/Footer";
 
 export default function InvitePage() {
   const params = useParams();
@@ -145,35 +146,41 @@ export default function InvitePage() {
   // Não renderizar até que o componente esteja montado no cliente
   if (!mounted || isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-green-600 border-t-transparent" />
+      <div className="flex min-h-screen flex-col">
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-green-600 border-t-transparent" />
+            </div>
+            <p className="text-sm sm:text-base text-muted-foreground">Carregando convite...</p>
           </div>
-          <p className="text-muted-foreground">Carregando convite...</p>
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!tea) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-8 text-center">
-            <div className="mb-4 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-                <Heart className="h-8 w-8 text-red-600" />
+      <div className="flex min-h-screen flex-col">
+        <div className="flex-1 flex items-center justify-center px-4">
+          <Card className="w-full max-w-md">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <div className="mb-4 flex justify-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                  <Heart className="h-8 w-8 text-red-600" />
+                </div>
               </div>
-            </div>
-            <h1 className="mb-2 text-2xl font-bold text-foreground">
-              Convite não encontrado
-            </h1>
-            <p className="text-muted-foreground">
-              O link do convite pode estar incorreto ou o convite pode ter sido removido.
-            </p>
-          </CardContent>
-        </Card>
+              <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">
+                Convite não encontrado
+              </h1>
+              <p className="text-sm sm:text-base text-muted-foreground">
+                O link do convite pode estar incorreto ou o convite pode ter sido removido.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -191,43 +198,46 @@ export default function InvitePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
-      <div className="mx-auto max-w-4xl">
-        <div className="rounded-lg">
-          {showConfirmation ? (
-            <InviteConfirmationWrapper
-              guestName={guestName}
-              settings={settings}
-            />
-          ) : (
-            <>
-              {currentStep === 1 && (
-                <InviteStep1Wrapper
-                  settings={settings}
-                  onNext={handleNext}
-                  currentStep={currentStep}
-                />
-              )}
-              {currentStep === 2 && (
-                <InviteStep2Wrapper
-                  settings={settings}
-                  onNext={(guestName: string, companions: string[]) => {
-                    handleConfirmPresence(guestName, companions);
-                  }}
-                  onBack={handleBack}
-                />
-              )}
-              {currentStep === 3 && (
-                <InviteStep3
-                  gifts={gifts}
-                  onBack={handleBack}
-                  onConfirm={handleSelectGifts}
-                />
-              )}
-            </>
-          )}
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-green-50 to-white">
+      <div className="flex-1 py-6 sm:py-8 md:py-12">
+        <div className="mx-auto max-w-4xl px-4">
+          <div className="rounded-lg">
+            {showConfirmation ? (
+              <InviteConfirmationWrapper
+                guestName={guestName}
+                settings={settings}
+              />
+            ) : (
+              <>
+                {currentStep === 1 && (
+                  <InviteStep1Wrapper
+                    settings={settings}
+                    onNext={handleNext}
+                    currentStep={currentStep}
+                  />
+                )}
+                {currentStep === 2 && (
+                  <InviteStep2Wrapper
+                    settings={settings}
+                    onNext={(guestName: string, companions: string[]) => {
+                      handleConfirmPresence(guestName, companions);
+                    }}
+                    onBack={handleBack}
+                  />
+                )}
+                {currentStep === 3 && (
+                  <InviteStep3
+                    gifts={gifts}
+                    onBack={handleBack}
+                    onConfirm={handleSelectGifts}
+                  />
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
@@ -250,22 +260,22 @@ function InviteConfirmationWrapper({
         <Heart className="h-8 w-8 text-green-600 fill-green-600" />
       </div>
 
-      <div className="flex flex-col items-center gap-2">
-        <h2 className="text-3xl font-bold text-foreground">
+      <div className="flex flex-col items-center gap-2 px-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground text-center">
           Obrigado, {guestName}! 🎉
         </h2>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-base sm:text-lg text-muted-foreground text-center">
           Sua presença foi confirmada com sucesso.
         </p>
       </div>
 
-      <Card className="w-full max-w-md shadow-md">
-        <CardContent className="p-6">
+      <Card className="w-full max-w-md shadow-md mx-4">
+        <CardContent className="p-4 sm:p-6">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-foreground text-center">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground text-center">
               Nos vemos em breve!
             </h3>
-            <div className="space-y-2 text-foreground text-center">
+            <div className="space-y-2 text-sm sm:text-base text-foreground text-center">
               <p>
                 {settings.date} às {settings.time}
               </p>
@@ -312,29 +322,29 @@ function InviteStep1Wrapper({
 
       {/* Event Details */}
       <div className="flex gap-3 w-1/2 mx-auto flex-wrap justify-center">
-        <div className="flex items-center justify-center gap-3 rounded-lg border border-border bg-background px-4 py-3">
-          <Calendar className="h-5 w-5 text-green-600" />
-          <span className="text-foreground">{settings.date}</span>
+        <div className="flex items-center justify-center gap-2 sm:gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:px-4 sm:py-3 flex-1 sm:flex-initial min-w-[140px]">
+          <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0" />
+          <span className="text-sm sm:text-base text-foreground truncate">{settings.date}</span>
         </div>
-        <div className="flex items-center justify-center gap-3 rounded-lg border border-border bg-background px-4 py-3">
-          <Clock className="h-5 w-5 text-green-600" />
-          <span className="text-foreground">{settings.time}</span>
+        <div className="flex items-center justify-center gap-2 sm:gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:px-4 sm:py-3 flex-1 sm:flex-initial min-w-[140px]">
+          <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0" />
+          <span className="text-sm sm:text-base text-foreground truncate">{settings.time}</span>
         </div>
-        <div className="flex items-center justify-center gap-3 rounded-lg border border-border bg-background px-4 py-3">
-          <MapPin className="h-5 w-5 text-green-600" />
-          <span className="text-foreground">{settings.location}</span>
+        <div className="flex items-center justify-center gap-2 sm:gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:px-4 sm:py-3 flex-1 sm:flex-initial min-w-[140px]">
+          <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0" />
+          <span className="text-sm sm:text-base text-foreground truncate">{settings.location}</span>
         </div>
       </div>
 
       {/* Invitation Message */}
       {settings.customMessage && (
-        <Card className="shadow-md">
-          <CardContent className="p-6">
+        <Card className="shadow-md mx-4">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col items-center gap-4 text-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 shrink-0">
                 <Heart className="h-5 w-5 text-green-600" />
               </div>
-              <p className="text-foreground leading-relaxed">
+              <p className="text-sm sm:text-base text-foreground leading-relaxed px-2">
                 {settings.customMessage}
               </p>
             </div>
@@ -356,16 +366,16 @@ function InviteStep1Wrapper({
             </div>
           </div>
         </div>
-        <h2 className="text-center text-2xl font-bold text-foreground">
+        <h2 className="text-center text-xl sm:text-2xl font-bold text-foreground px-4">
           Você está convidado!
         </h2>
-        <p className="text-center text-muted-foreground">
+        <p className="text-center text-sm sm:text-base text-muted-foreground px-4">
           Confirme sua presença e escolha um presente especial para o bebê.
         </p>
         <Button
           onClick={onNext}
           size="lg"
-          className="bg-green-600 hover:bg-green-700 text-white px-8"
+          className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 text-sm sm:text-base w-full sm:w-auto"
         >
           Confirmar presença
           <Heart className="ml-2 h-4 w-4" />
@@ -395,7 +405,7 @@ function InviteStep2Wrapper({
       companions: z
         .array(
           z.object({
-            name: z.string().min(1, "Nome do acompanhante é obrigatório"),
+            name: z.string().min(1, "Nome completo do acompanhante é obrigatório"),
           })
         )
         .max(maxCompanions, `Máximo de ${maxCompanions} acompanhantes`)
@@ -445,17 +455,17 @@ function InviteStep2Wrapper({
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
           <CheckCircle2 className="h-8 w-8 text-green-600" />
         </div>
-        <h2 className="text-center text-2xl font-bold text-foreground">
+        <h2 className="text-center text-xl sm:text-2xl font-bold text-foreground px-4">
           Confirmação de Presença
         </h2>
-        <p className="text-center text-muted-foreground">
+        <p className="text-center text-sm sm:text-base text-muted-foreground px-4">
           Preencha seus dados para confirmar
         </p>
       </div>
 
       {/* Form Card */}
-      <Card className="shadow-md">
-        <CardContent className="p-6">
+      <Card className="shadow-md mx-4">
+        <CardContent className="p-4 sm:p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Seus dados */}
@@ -483,14 +493,14 @@ function InviteStep2Wrapper({
 
               {/* Acompanhantes */}
               <div className="space-y-4 border-t pt-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-green-600" />
-                    <h3 className="text-lg font-semibold text-foreground">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
+                    <Users className="h-5 w-5 text-green-600 shrink-0" />
+                    <h3 className="text-lg font-semibold text-foreground whitespace-nowrap">
                       Acompanhantes
                     </h3>
                   </div>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-muted-foreground whitespace-nowrap flex-shrink-0">
                     {validCompanionsCount}/{MAX_COMPANIONS} permitidos
                   </span>
                 </div>
@@ -511,7 +521,7 @@ function InviteStep2Wrapper({
                             <div className="flex items-center gap-2">
                               <FormControl className="flex-1">
                                 <Input
-                                  placeholder="Nome do acompanhante"
+                                  placeholder="Nome completo do acompanhante"
                                   {...companionField}
                                 />
                               </FormControl>
@@ -538,7 +548,7 @@ function InviteStep2Wrapper({
                     type="button"
                     variant="outline"
                     onClick={handleAddCompanion}
-                    className="w-full border-green-600 text-green-600 hover:bg-green-50"
+                    className="w-full border-green-600 text-green-600 hover:bg-green-50 text-sm sm:text-base"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Adicionar acompanhante
@@ -547,21 +557,22 @@ function InviteStep2Wrapper({
               </div>
 
               {/* Actions */}
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={onBack}
-                  className="flex-1 border-green-600 text-green-600 hover:bg-green-50"
+                  className="flex-1 border-green-600 text-green-600 hover:bg-green-50 text-sm sm:text-base"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Voltar
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
                 >
-                  Continuar para presentes
+                  <span className="hidden sm:inline">Continuar para presentes</span>
+                  <span className="sm:hidden">Continuar</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>

@@ -65,38 +65,38 @@ export function InviteStep3({
 
   const handleConfirm = () => {
     const selected: SelectedGift[] = [];
-    
+
     // Adiciona presentes selecionados
     selectedGifts.forEach((giftId) => {
       selected.push({ id: giftId });
     });
-    
+
     // Adiciona presente customizado se selecionado e preenchido
     if (isCustomSelected && customGift.trim()) {
       selected.push({ id: null, customGift: customGift.trim() });
     }
-    
+
     onConfirm(selected);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <Gift className="h-8 w-8 text-green-600" />
+        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-green-100 shrink-0">
+          <Gift className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
         </div>
-        <h2 className="text-center text-2xl font-bold text-foreground">
+        <h2 className="text-center text-xl sm:text-2xl font-bold text-foreground">
           Escolha os Presentes
         </h2>
-        <p className="text-center text-muted-foreground">
+        <p className="text-center text-sm sm:text-base text-muted-foreground">
           Selecione um ou mais presentes para o bebê
         </p>
       </div>
 
       <Card className="shadow-md">
-        <CardContent className="p-6">
-          <div className="space-y-4">
+        <CardContent className="p-3 sm:p-4 md:p-6">
+          <div className="space-y-3 sm:space-y-4">
             {gifts.map((gift) => {
               const status = getGiftStatus(gift);
               const remaining = gift.quantity - gift.chosen;
@@ -108,7 +108,7 @@ export function InviteStep3({
                   key={gift.id}
                   onClick={() => isAvailable && handleGiftToggle(gift.id)}
                   className={cn(
-                    "flex items-start gap-4 rounded-lg border p-4 transition-colors",
+                    "flex items-start gap-2 sm:gap-3 md:gap-4 rounded-lg border p-3 sm:p-4 transition-colors",
                     isSelected
                       ? "border-green-600 bg-green-50"
                       : "border-border",
@@ -126,29 +126,31 @@ export function InviteStep3({
                         handleGiftToggle(gift.id);
                       }
                     }}
-                    className="mt-1"
+                    className="mt-1 shrink-0"
                     onClick={(e) => e.stopPropagation()}
                   />
-                  <div className="flex-1 space-y-2">
+                  <div className="flex-1 space-y-1 sm:space-y-2 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <Label
                           htmlFor={gift.id}
                           className={cn(
-                            "text-base font-semibold cursor-pointer",
+                            "text-sm sm:text-base font-semibold cursor-pointer block break-words",
                             isAvailable ? "text-foreground" : "text-muted-foreground"
                           )}
                         >
                           {gift.title}
                         </Label>
-                        <p className={cn(
-                          "text-sm mt-1",
-                          isAvailable ? "text-muted-foreground" : "text-muted-foreground/70"
-                        )}>
-                          {gift.description}
-                        </p>
+                        {gift.description && (
+                          <p className={cn(
+                            "text-xs sm:text-sm mt-1 break-words",
+                            isAvailable ? "text-muted-foreground" : "text-muted-foreground/70"
+                          )}>
+                            {gift.description}
+                          </p>
+                        )}
                       </div>
-                      <Badge variant={status.variant} className="shrink-0">
+                      <Badge variant={status.variant} className="shrink-0 text-xs">
                         {status.label}
                       </Badge>
                     </div>
@@ -164,7 +166,7 @@ export function InviteStep3({
             <div
               onClick={handleCustomToggle}
               className={cn(
-                "flex items-start gap-4 rounded-lg border p-4 transition-colors cursor-pointer hover:border-green-300",
+                "flex items-start gap-2 sm:gap-3 md:gap-4 rounded-lg border p-3 sm:p-4 transition-colors cursor-pointer hover:border-green-300",
                 isCustomSelected
                   ? "border-green-600 bg-green-50"
                   : "border-border"
@@ -176,32 +178,35 @@ export function InviteStep3({
                   e.stopPropagation();
                   handleCustomToggle();
                 }}
-                className="mt-1"
+                className="mt-1 shrink-0"
                 onClick={(e) => e.stopPropagation()}
               />
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <Label
                     htmlFor="custom"
-                    className="text-base font-semibold text-foreground cursor-pointer"
+                    className="text-sm sm:text-base font-semibold text-foreground cursor-pointer"
                   >
                     Outro presente
                   </Label>
-                  <Badge variant="success" className="shrink-0">
+                  <Badge variant="success" className="shrink-0 text-xs">
                     Personalizado
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Digite o presente que você gostaria de dar
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Digite o presente que você gostaria de doar
                 </p>
                 {isCustomSelected && (
-                  <Input
-                    placeholder="Digite o nome do presente"
-                    value={customGift}
-                    onChange={(e) => setCustomGift(e.target.value)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="mt-2"
-                  />
+                  <div className="mt-2 w-full">
+                    <Input
+                      placeholder="Digite o nome do presente"
+                      value={customGift}
+                      onChange={(e) => setCustomGift(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      onFocus={(e) => e.stopPropagation()}
+                      className="w-full text-sm sm:text-base"
+                    />
+                  </div>
                 )}
               </div>
             </div>
@@ -211,21 +216,22 @@ export function InviteStep3({
 
       {/* Actions */}
       <div className="space-y-3">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <Button
             type="button"
             variant="outline"
             onClick={onBack}
-            className="flex-1 border-green-600 text-green-600 hover:bg-green-50"
+            className="flex-1 border-green-600 text-green-600 hover:bg-green-50 text-sm sm:text-base"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
           <Button
             onClick={handleConfirm}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+            className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
           >
-            Confirmar presença
+            <span className="hidden sm:inline">Confirmar presença</span>
+            <span className="sm:hidden">Confirmar</span>
             <Heart className="ml-2 h-4 w-4" />
           </Button>
         </div>
@@ -233,7 +239,7 @@ export function InviteStep3({
           type="button"
           variant="ghost"
           onClick={() => onConfirm([])}
-          className="w-full text-muted-foreground hover:text-foreground"
+          className="w-full text-xs sm:text-sm text-muted-foreground hover:text-foreground"
         >
           Confirmar sem escolher presente
         </Button>

@@ -98,8 +98,8 @@ export function AddGuestModal({
           companions: companionsData.length > 0
             ? companionsData.map((c) => ({ name: c.name || "" }))
             : Array.from({ length: guestToEdit.companionsTotal }, () => ({
-                name: "",
-              })),
+              name: "",
+            })),
         });
       } else {
         // Modo de adição: limpar formulário
@@ -217,7 +217,7 @@ export function AddGuestModal({
                           <div className="flex items-center gap-2">
                             <FormControl className="flex-1">
                               <Input
-                                placeholder="Nome do acompanhante"
+                                placeholder="Nome completo do acompanhante"
                                 {...companionField}
                               />
                             </FormControl>

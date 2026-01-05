@@ -15,18 +15,18 @@ const steps = [
 
 export function InviteStepper({ currentStep }: InviteStepperProps) {
   return (
-    <div className="flex items-center justify-center gap-2 mb-8">
+    <div className="flex items-center justify-center gap-1 sm:gap-2 mb-8 px-4">
       {steps.map((step, index) => {
         const isCompleted = step.number < currentStep;
         const isCurrent = step.number === currentStep;
         const isFuture = step.number > currentStep;
 
         return (
-          <div key={step.number} className="flex items-center gap-2">
-            <div className="flex flex-col items-center gap-2">
+          <div key={step.number} className="flex items-center gap-1 sm:gap-2">
+            <div className="flex flex-col items-center gap-1 sm:gap-2">
               <div
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-colors",
+                  "flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-semibold transition-colors",
                   isCompleted &&
                     "bg-green-600 text-white",
                   isCurrent &&
@@ -36,14 +36,14 @@ export function InviteStepper({ currentStep }: InviteStepperProps) {
                 )}
               >
                 {isCompleted ? (
-                  <Check className="h-5 w-5" />
+                  <Check className="h-4 w-4 sm:h-5 sm:w-5" />
                 ) : (
                   step.number
                 )}
               </div>
               <span
                 className={cn(
-                  "text-sm font-medium",
+                  "text-xs sm:text-sm font-medium text-center",
                   isCompleted || isCurrent
                     ? "text-foreground"
                     : "text-muted-foreground"
@@ -55,7 +55,7 @@ export function InviteStepper({ currentStep }: InviteStepperProps) {
             {index < steps.length - 1 && (
               <div
                 className={cn(
-                  "h-0.5 w-8 transition-colors",
+                  "h-0.5 w-4 sm:w-8 transition-colors",
                   isCompleted ? "bg-green-600" : "bg-gray-200"
                 )}
               />

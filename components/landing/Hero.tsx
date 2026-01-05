@@ -14,15 +14,15 @@ export function Hero() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-pink-100 px-4 py-2">
-            <Clock className="h-4 w-4 text-green-600" />
-            <span className="text-sm font-medium text-gray-700">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-2 sm:px-4">
+            <Clock className="h-4 w-4 text-green-600 shrink-0" />
+            <span className="text-xs sm:text-sm font-medium text-gray-700">
               A forma mais especial de celebrar
             </span>
           </div>
 
           {/* Headline */}
-          <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          <h1 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl px-2">
             Organize seu{" "}
             <span className="font-[family-name:var(--font-serif)] italic text-green-600">
               Chá de Bebê
@@ -31,7 +31,7 @@ export function Hero() {
           </h1>
 
           {/* Description */}
-          <p className="mb-8 text-lg text-muted-foreground sm:text-xl">
+          <p className="mb-8 text-base text-muted-foreground sm:text-lg md:text-xl px-4">
             Crie convites personalizados, gerencie sua lista de presentes e
             confirme a presença dos convidados — tudo em um só lugar.
           </p>
@@ -41,10 +41,11 @@ export function Hero() {
             <Button
               onClick={handleSignIn}
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-base cursor-pointer"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-6 text-sm sm:px-8 sm:text-base cursor-pointer w-full sm:w-auto"
             >
-              Entrar com Google para criar meu planejamento
-              <Heart className="h-4 w-4" />
+              <span className="hidden sm:inline">Entrar com Google para criar meu planejamento</span>
+              <span className="sm:hidden">Entrar com Google</span>
+              <Heart className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
