@@ -23,14 +23,8 @@ export function EventInfo({
     return null;
   }
 
-  // Calcular total de pessoas confirmadas (convidados + acompanhantes)
-  const confirmedPeople = totalPeople ?? confirmedGuests + totalCompanions;
-
-  // Total esperado seria todos os convidados (assumindo que cada um pode ter acompanhantes)
-  // Por enquanto, vamos usar o total de convidados como base
-  // Em uma implementação real, você calcularia: totalGuests + (totalGuests * maxCompanionsPerGuest)
-  const maxCompanionsPerGuest = settings.maxCompanionsPerGuest;
-  const totalPeopleExpected = totalGuests + (totalGuests * maxCompanionsPerGuest);
+  // Total de pessoas confirmadas (convidados + acompanhantes)
+  const totalConfirmedPeople = totalPeople ?? totalGuests + totalCompanions;
 
   return (
     <Card>
@@ -53,7 +47,7 @@ export function EventInfo({
         <div className="flex items-center gap-3">
           <Users className="h-5 w-5 text-muted-foreground" />
           <span className="text-foreground">
-            {confirmedPeople} de {totalPeopleExpected} pessoas confirmadas
+            {totalConfirmedPeople} pessoas confirmadas
           </span>
         </div>
       </CardContent>
