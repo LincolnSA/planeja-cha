@@ -12,14 +12,7 @@ import { InviteStep1 } from "@/components/invite/InviteStep1";
 import { InviteStep2 } from "@/components/invite/InviteStep2";
 import { InviteStep3 } from "@/components/invite/InviteStep3";
 import { InviteConfirmation } from "@/components/invite/InviteConfirmation";
-
-interface Gift {
-  id: string;
-  title: string;
-  description: string;
-  quantity: number;
-  chosen: number;
-}
+import type { Gift } from "@/actions/gift";
 
 interface InviteModalProps {
   open: boolean;
@@ -27,42 +20,10 @@ interface InviteModalProps {
   gifts?: Gift[];
 }
 
-// Mock de presentes - você pode substituir por dados reais depois
-const defaultGifts: Gift[] = [
-  {
-    id: "1",
-    title: "Kit Banho Bebê",
-    description: "Toalha, sabonete e shampoo",
-    quantity: 3,
-    chosen: 1,
-  },
-  {
-    id: "2",
-    title: "Fralda Descartável P",
-    description: "Pacote com 40 unidades",
-    quantity: 5,
-    chosen: 3,
-  },
-  {
-    id: "3",
-    title: "Mamadeira Anticólica",
-    description: "Kit com 3 mamadeiras",
-    quantity: 2,
-    chosen: 2,
-  },
-  {
-    id: "4",
-    title: "Body Manga Longa",
-    description: "Kit 3 peças - Tam P",
-    quantity: 4,
-    chosen: 1,
-  },
-];
-
 export function InviteModal({
   open,
   onOpenChange,
-  gifts = defaultGifts,
+  gifts = [],
 }: InviteModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [guestName, setGuestName] = useState<string>("");

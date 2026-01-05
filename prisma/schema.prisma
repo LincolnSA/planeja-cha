@@ -78,6 +78,69 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
+model Guest {
+  id    String @id @default(cuid())
+  name  String
+  teaId String @map("tea_id")
+  tea   Tea    @relation(fields: [teaId], references: [id], onDelete: Cascade)
+
+  giftSelections GuestGiftSelection[]
+  customGifts    CustomGift[]
+  companions     Companion[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Companion {
+  id      String @id @default(cuid())
+  name    String
+  guestId String @map("guest_id")
+  guest   Guest  @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Gift {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  quantity    Int
+  chosen      Int    @default(0)
+
+  teaId String @map("tea_id")
+  tea   Tea    @relation(fields: [teaId], references: [id], onDelete: Cascade)
+
+  selections GuestGiftSelection[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model GuestGiftSelection {
+  id      String @id @default(cuid())
+  guestId String @map("guest_id")
+  giftId  String @map("gift_id")
+  guest   Guest  @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  gift    Gift   @relation(fields: [giftId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([guestId, giftId])
+}
+
+model CustomGift {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  guestId     String  @map("guest_id")
+  guest       Guest   @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
 model Tea {
   id                    String   @id @default(cuid())
   name                  String
@@ -94,4 +157,7 @@ model Tea {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  gifts  Gift[]
+  guests Guest[]
 }

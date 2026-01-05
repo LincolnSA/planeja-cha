@@ -22,6 +22,7 @@ interface GiftCardProps {
 export function GiftCard({ gift, onEdit, onDelete }: GiftCardProps) {
   const remaining = gift.quantity - gift.chosen;
   const progress = gift.quantity > 0 ? (gift.chosen / gift.quantity) * 100 : 0;
+  const canDelete = gift.chosen === 0;
 
   return (
     <Card className="relative">
@@ -40,7 +41,9 @@ export function GiftCard({ gift, onEdit, onDelete }: GiftCardProps) {
             variant="ghost"
             size="icon"
             onClick={() => onDelete?.(gift)}
-            className="h-8 w-8 text-destructive hover:text-destructive"
+            disabled={!canDelete}
+            className="h-8 w-8 text-destructive hover:text-destructive disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!canDelete ? "Não é possível deletar presentes que já foram escolhidos" : "Deletar presente"}
           >
             <Trash2 className="h-4 w-4" />
           </Button>

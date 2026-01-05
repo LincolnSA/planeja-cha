@@ -15,6 +15,7 @@ interface DeleteGiftModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   giftTitle: string;
+  giftChosen?: number;
   onConfirm: () => void;
 }
 
@@ -22,8 +23,10 @@ export function DeleteGiftModal({
   open,
   onOpenChange,
   giftTitle,
+  giftChosen = 0,
   onConfirm,
 }: DeleteGiftModalProps) {
+  const canDelete = giftChosen === 0;
   const handleConfirm = () => {
     onConfirm();
     onOpenChange(false);
@@ -44,30 +47,46 @@ export function DeleteGiftModal({
             <DialogTitle>Excluir Presente</DialogTitle>
           </div>
           <DialogDescription className="pt-2">
-            Tem certeza que deseja excluir o presente{" "}
-            <span className="font-semibold text-foreground">{giftTitle}</span>?
-            <br />
-            <br />
-            Esta ação não pode ser desfeita. Todos os dados relacionados a este presente serão permanentemente excluídos, incluindo:
-            <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-              <li>Informações do presente</li>
-              <li>Quantidade disponível</li>
-              <li>Escolhas de convidados (se houver)</li>
-            </ul>
+            {canDelete ? (
+              <>
+                Tem certeza que deseja excluir o presente{" "}
+                <span className="font-semibold text-foreground">{giftTitle}</span>?
+                <br />
+                <br />
+                Esta ação não pode ser desfeita. Todos os dados relacionados a este presente serão permanentemente excluídos, incluindo:
+                <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
+                  <li>Informações do presente</li>
+                  <li>Quantidade disponível</li>
+                </ul>
+              </>
+            ) : (
+              <>
+                Não é possível excluir o presente{" "}
+                <span className="font-semibold text-foreground">{giftTitle}</span>.
+                <br />
+                <br />
+                Este presente já foi escolhido por <span className="font-semibold text-foreground">{giftChosen} convidado(s)</span>. Para manter a integridade dos dados, apenas presentes não escolhidos podem ser excluídos.
+                <br />
+                <br />
+                Se desejar remover este presente, primeiro é necessário que os convidados desmarquem suas escolhas.
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
           <Button variant="outline" onClick={handleCancel}>
-            Cancelar
+            {canDelete ? "Cancelar" : "Fechar"}
           </Button>
-          <Button
-            onClick={handleConfirm}
-            variant="destructive"
-            className="bg-red-600 text-white hover:bg-red-700"
-          >
-            Deletar Presente
-          </Button>
+          {canDelete && (
+            <Button
+              onClick={handleConfirm}
+              variant="destructive"
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              Deletar Presente
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

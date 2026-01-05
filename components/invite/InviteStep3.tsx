@@ -9,14 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface Gift {
-  id: string;
-  title: string;
-  description: string;
-  quantity: number;
-  chosen: number;
-}
+import type { Gift } from "@/actions/gift";
 
 interface SelectedGift {
   id: string | null;
