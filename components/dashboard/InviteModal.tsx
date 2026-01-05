@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,22 +12,25 @@ import { InviteStep1 } from "@/components/invite/InviteStep1";
 import { InviteStep2 } from "@/components/invite/InviteStep2";
 import { InviteStep3 } from "@/components/invite/InviteStep3";
 import { InviteConfirmation } from "@/components/invite/InviteConfirmation";
+import { useEvent } from "@/contexts/EventContext";
+import { getGifts } from "@/actions/gift";
 import type { Gift } from "@/actions/gift";
 
 interface InviteModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  gifts?: Gift[];
 }
 
 export function InviteModal({
   open,
   onOpenChange,
-  gifts = [],
 }: InviteModalProps) {
+  const { currentEvent } = useEvent();
   const [currentStep, setCurrentStep] = useState(1);
   const [guestName, setGuestName] = useState<string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [gifts, setGifts] = useState<Gift[]>([]);
+  const [isLoadingGifts, setIsLoadingGifts] = useState(false);
 
   const handleNext = (name?: string) => {
     if (name) {
@@ -56,11 +59,35 @@ export function InviteModal({
     setShowConfirmation(true);
   };
 
+  // Carregar presentes quando o modal abrir
+  useEffect(() => {
+    const loadGifts = async () => {
+      if (!open || !currentEvent?.id) {
+        setGifts([]);
+        return;
+      }
+
+      try {
+        setIsLoadingGifts(true);
+        const giftsData = await getGifts(currentEvent.id);
+        setGifts(giftsData);
+      } catch (error) {
+        console.error("Erro ao carregar presentes:", error);
+        setGifts([]);
+      } finally {
+        setIsLoadingGifts(false);
+      }
+    };
+
+    loadGifts();
+  }, [open, currentEvent?.id]);
+
   const handleClose = (open: boolean) => {
     if (!open) {
       setCurrentStep(1);
       setGuestName("");
       setShowConfirmation(false);
+      setGifts([]);
     }
     onOpenChange(open);
   };

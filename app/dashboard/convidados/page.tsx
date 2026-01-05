@@ -22,17 +22,17 @@ export default function GuestsPage() {
   const [isLoadingGuest, setIsLoadingGuest] = useState(false);
   const { showToast } = useToast();
 
-  // Se não há eventos ou não há evento selecionado, mostrar tela de boas-vindas
-  if (!eventContext || eventContext.events.length === 0 || !eventContext.currentEvent) {
-    return <WelcomeScreen />;
-  }
-
-  const currentEvent = eventContext.currentEvent!;
-  const eventName = currentEvent.eventName;
+  // Obter o evento atual (pode ser null)
+  const currentEvent = eventContext?.currentEvent;
+  const eventName = currentEvent?.eventName;
 
   // Carregar convidados do banco
   const loadGuests = async () => {
-    if (!currentEvent.id) return;
+    if (!currentEvent?.id) {
+      setGuests([]);
+      setIsLoading(false);
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -51,7 +51,12 @@ export default function GuestsPage() {
   useEffect(() => {
     loadGuests();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEvent.id]);
+  }, [currentEvent?.id]);
+
+  // Se não há eventos ou não há evento selecionado, mostrar tela de boas-vindas
+  if (!eventContext || eventContext.events.length === 0 || !currentEvent) {
+    return <WelcomeScreen />;
+  }
 
   const totalGuests = guests.length;
   const totalPeople = guests.reduce(

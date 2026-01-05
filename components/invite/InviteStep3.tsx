@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Heart } from "lucide-react";
+import { ArrowLeft, Heart, Gift } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Gift } from "@/actions/gift";
 
@@ -81,6 +81,19 @@ export function InviteStep3({
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+          <Gift className="h-8 w-8 text-green-600" />
+        </div>
+        <h2 className="text-center text-2xl font-bold text-foreground">
+          Escolha os Presentes
+        </h2>
+        <p className="text-center text-muted-foreground">
+          Selecione um ou mais presentes para o bebê
+        </p>
+      </div>
+
       <Card className="shadow-md">
         <CardContent className="p-6">
           <div className="space-y-4">
@@ -95,11 +108,13 @@ export function InviteStep3({
                   key={gift.id}
                   onClick={() => isAvailable && handleGiftToggle(gift.id)}
                   className={cn(
-                    "flex items-start gap-4 rounded-lg border p-4 transition-colors cursor-pointer",
+                    "flex items-start gap-4 rounded-lg border p-4 transition-colors",
                     isSelected
                       ? "border-green-600 bg-green-50"
-                      : "border-border hover:border-green-300",
-                    !isAvailable && "opacity-50 cursor-not-allowed"
+                      : "border-border",
+                    isAvailable
+                      ? "cursor-pointer hover:border-green-300"
+                      : "opacity-60 cursor-not-allowed"
                   )}
                 >
                   <Checkbox
@@ -119,11 +134,17 @@ export function InviteStep3({
                       <div className="flex-1">
                         <Label
                           htmlFor={gift.id}
-                          className="text-base font-semibold text-foreground cursor-pointer"
+                          className={cn(
+                            "text-base font-semibold cursor-pointer",
+                            isAvailable ? "text-foreground" : "text-muted-foreground"
+                          )}
                         >
                           {gift.title}
                         </Label>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className={cn(
+                          "text-sm mt-1",
+                          isAvailable ? "text-muted-foreground" : "text-muted-foreground/70"
+                        )}>
                           {gift.description}
                         </p>
                       </div>
@@ -131,11 +152,9 @@ export function InviteStep3({
                         {status.label}
                       </Badge>
                     </div>
-                    {isAvailable && (
-                      <p className="text-xs text-muted-foreground">
-                        {remaining} disponíveis
-                      </p>
-                    )}
+                    <p className="text-xs text-muted-foreground">
+                      {isAvailable ? `${remaining} disponíveis` : "Esgotado"}
+                    </p>
                   </div>
                 </div>
               );

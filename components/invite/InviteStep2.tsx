@@ -64,7 +64,8 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
   ).length;
 
   const handleAddCompanion = () => {
-    if (validCompanionsCount < MAX_COMPANIONS) {
+    // Limitar pelo número de inputs criados, não pelos preenchidos
+    if (fields.length < MAX_COMPANIONS) {
       append({ name: "" });
     }
   };
@@ -170,7 +171,7 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
                   </div>
                 )}
 
-                {validCompanionsCount < MAX_COMPANIONS && (
+                {fields.length < MAX_COMPANIONS && (
                   <Button
                     type="button"
                     variant="outline"

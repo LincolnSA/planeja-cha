@@ -219,7 +219,6 @@ export default function GiftsPage() {
       <InviteModal
         open={isInviteModalOpen}
         onOpenChange={setIsInviteModalOpen}
-        gifts={gifts}
       />
     </div>
   );
