@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEvent } from "@/contexts/EventContext";
+import { useToast } from "@/components/ui/toast";
 
 const guestSettingsSchema = z.object({
   maxCompanionsPerGuest: z.coerce
@@ -29,6 +30,7 @@ type GuestSettingsFormValues = z.infer<typeof guestSettingsSchema>;
 
 export function GuestSettingsForm() {
   const { settings, currentEventId, updateEvent } = useEvent();
+  const { showToast } = useToast();
 
   const form = useForm<GuestSettingsFormValues>({
     resolver: zodResolver(guestSettingsSchema),
@@ -44,13 +46,18 @@ export function GuestSettingsForm() {
     });
   }, [settings.maxCompanionsPerGuest, currentEventId, form]);
 
-  const onSubmit = (values: GuestSettingsFormValues) => {
+  const onSubmit = async (values: GuestSettingsFormValues) => {
     if (currentEventId) {
-      updateEvent(currentEventId, {
-        maxCompanionsPerGuest: values.maxCompanionsPerGuest,
-      });
+      try {
+        await updateEvent(currentEventId, {
+          maxCompanionsPerGuest: values.maxCompanionsPerGuest,
+        });
+        showToast("Configurações de convidados atualizadas com sucesso!", "success");
+      } catch (error) {
+        showToast("Erro ao atualizar configurações. Tente novamente.", "error");
+        console.error("Erro ao atualizar configurações:", error);
+      }
     }
-    // Aqui você pode adicionar um toast de sucesso
   };
 
   return (

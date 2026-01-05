@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/components/ui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock } from "lucide-react";
+import { DatePicker } from "@/components/ui/date-picker";
+import { TimePicker } from "@/components/ui/time-picker";
 import { useEvent } from "@/contexts/EventContext";
 
 const eventInfoSchema = z.object({
@@ -32,6 +34,7 @@ type EventInfoFormValues = z.infer<typeof eventInfoSchema>;
 
 export function EventInfoForm() {
   const { settings, currentEventId, updateEvent } = useEvent();
+  const { showToast } = useToast();
 
   const form = useForm<EventInfoFormValues>({
     resolver: zodResolver(eventInfoSchema),
@@ -57,18 +60,23 @@ export function EventInfoForm() {
     });
   }, [settings, currentEventId, form]);
 
-  const onSubmit = (values: EventInfoFormValues) => {
+  const onSubmit = async (values: EventInfoFormValues) => {
     if (currentEventId) {
-      updateEvent(currentEventId, {
-        eventName: values.eventName,
-        parentsName: values.parentsName,
-        date: values.date,
-        time: values.time,
-        location: values.location,
-        customMessage: values.customMessage || "",
-      });
+      try {
+        await updateEvent(currentEventId, {
+          eventName: values.eventName,
+          parentsName: values.parentsName,
+          date: values.date,
+          time: values.time,
+          location: values.location,
+          customMessage: values.customMessage || "",
+        });
+        showToast("Informações do chá atualizadas com sucesso!", "success");
+      } catch (error) {
+        showToast("Erro ao atualizar informações. Tente novamente.", "error");
+        console.error("Erro ao atualizar evento:", error);
+      }
     }
-    // Aqui você pode adicionar um toast de sucesso
   };
 
   return (
@@ -111,22 +119,44 @@ export function EventInfoForm() {
               <FormField
                 control={form.control}
                 name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Data</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
+                render={({ field }) => {
+                  // Converte DD/MM/YYYY para YYYY-MM-DD para o DatePicker
+                  const convertToYYYYMMDD = (ddmmyyyy: string): string => {
+                    if (!ddmmyyyy) return "";
+                    const parts = ddmmyyyy.split("/");
+                    if (parts.length === 3) {
+                      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    }
+                    return ddmmyyyy;
+                  };
+
+                  // Converte YYYY-MM-DD para DD/MM/YYYY para o formulário
+                  const convertToDDMMYYYY = (yyyymmdd: string): string => {
+                    if (!yyyymmdd) return "";
+                    const date = new Date(yyyymmdd + "T00:00:00");
+                    if (isNaN(date.getTime())) return yyyymmdd;
+                    const day = String(date.getDate()).padStart(2, "0");
+                    const month = String(date.getMonth() + 1).padStart(2, "0");
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Data</FormLabel>
+                      <FormControl>
+                        <DatePicker
+                          value={convertToYYYYMMDD(field.value || "")}
+                          onChange={(value) => {
+                            field.onChange(convertToDDMMYYYY(value));
+                          }}
                           placeholder="DD/MM/AAAA"
-                          className="pl-10"
-                          {...field}
                         />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField
@@ -136,14 +166,11 @@ export function EventInfoForm() {
                   <FormItem>
                     <FormLabel>Horário</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="HH:MM"
-                          className="pl-10"
-                          {...field}
-                        />
-                      </div>
+                      <TimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Selecione o horário"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

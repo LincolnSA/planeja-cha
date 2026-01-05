@@ -13,8 +13,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useContext, useState } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
+import { TimePicker } from "@/components/ui/time-picker";
+import { useContext, useState, useEffect } from "react";
 import { EventContext } from "@/contexts/EventContext";
+import { useToast } from "@/components/ui/toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -47,6 +50,7 @@ export function WelcomeScreen() {
 
   const { createEvent } = eventContext;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { showToast } = useToast();
 
   const form = useForm<NewEventFormValues>({
     resolver: zodResolver(newEventSchema),
@@ -61,13 +65,37 @@ export function WelcomeScreen() {
     },
   });
 
-  const onSubmit = (values: NewEventFormValues) => {
-    createEvent({
+  // Resetar formulário quando o modal abrir para garantir valores vazios
+  useEffect(() => {
+    if (isDialogOpen) {
+      form.reset({
+        eventName: "",
+        parentsName: "",
+        date: "",
+        time: "",
+        location: "",
+        customMessage: "",
+        maxCompanionsPerGuest: 5,
+      });
+    }
+  }, [isDialogOpen, form]);
+
+  const onSubmit = async (values: NewEventFormValues) => {
+    const result = await createEvent({
       ...values,
       customMessage: values.customMessage || "",
     });
-    form.reset();
-    setIsDialogOpen(false);
+    
+    if (result) {
+      form.reset();
+      setIsDialogOpen(false);
+      showToast("Chá criado com sucesso!", "success");
+      // Recarrega os eventos do banco
+      await eventContext.refreshEvents();
+    } else {
+      showToast("Erro ao criar chá. Tente novamente.", "error");
+      console.error("Erro ao criar chá");
+    }
   };
 
   return (
@@ -170,15 +198,44 @@ export function WelcomeScreen() {
                       <FormField
                         control={form.control}
                         name="date"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Data</FormLabel>
-                            <FormControl>
-                              <Input placeholder="15/03/2026" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        render={({ field }) => {
+                          // Converte DD/MM/YYYY para YYYY-MM-DD para o DatePicker
+                          const convertToYYYYMMDD = (ddmmyyyy: string): string => {
+                            if (!ddmmyyyy) return "";
+                            const parts = ddmmyyyy.split("/");
+                            if (parts.length === 3) {
+                              return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                            }
+                            return ddmmyyyy;
+                          };
+
+                          // Converte YYYY-MM-DD para DD/MM/YYYY para o formulário
+                          const convertToDDMMYYYY = (yyyymmdd: string): string => {
+                            if (!yyyymmdd) return "";
+                            const date = new Date(yyyymmdd + "T00:00:00");
+                            if (isNaN(date.getTime())) return yyyymmdd;
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                            const year = date.getFullYear();
+                            return `${day}/${month}/${year}`;
+                          };
+
+                          return (
+                            <FormItem>
+                              <FormLabel>Data</FormLabel>
+                              <FormControl>
+                                <DatePicker
+                                  value={convertToYYYYMMDD(field.value || "")}
+                                  onChange={(value) => {
+                                    field.onChange(convertToDDMMYYYY(value));
+                                  }}
+                                  placeholder="DD/MM/AAAA"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
 
                       <FormField
@@ -188,7 +245,11 @@ export function WelcomeScreen() {
                           <FormItem>
                             <FormLabel>Horário</FormLabel>
                             <FormControl>
-                              <Input placeholder="15:00" {...field} />
+                              <TimePicker
+                                value={field.value}
+                                onChange={field.onChange}
+                                placeholder="Selecione o horário"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

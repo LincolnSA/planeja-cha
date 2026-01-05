@@ -2,8 +2,9 @@
 
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DatePicker } from "@/components/ui/date-picker";
+import { TimePicker } from "@/components/ui/time-picker";
 import { ChevronDown, Plus } from "lucide-react";
 import { EventContext } from "@/contexts/EventContext";
 import { useForm } from "react-hook-form";
@@ -49,6 +52,7 @@ export function EventSelector() {
 
   const { events, currentEventId, setCurrentEvent, createEvent } = eventContext;
   const [isNewEventOpen, setIsNewEventOpen] = useState(false);
+  const { showToast } = useToast();
 
   const form = useForm<NewEventFormValues>({
     resolver: zodResolver(newEventSchema),
@@ -63,13 +67,37 @@ export function EventSelector() {
     },
   });
 
-  const onSubmit = (values: NewEventFormValues) => {
-    createEvent({
+  // Resetar formulário quando o modal abrir para garantir valores vazios
+  useEffect(() => {
+    if (isNewEventOpen) {
+      form.reset({
+        eventName: "",
+        parentsName: "",
+        date: "",
+        time: "",
+        location: "",
+        customMessage: "",
+        maxCompanionsPerGuest: 5,
+      });
+    }
+  }, [isNewEventOpen, form]);
+
+  const onSubmit = async (values: NewEventFormValues) => {
+    const result = await createEvent({
       ...values,
       customMessage: values.customMessage || "",
     });
-    form.reset();
-    setIsNewEventOpen(false);
+    
+    if (result) {
+      form.reset();
+      setIsNewEventOpen(false);
+      showToast("Chá criado com sucesso!", "success");
+      // Recarrega os eventos do banco
+      await eventContext.refreshEvents();
+    } else {
+      showToast("Erro ao criar chá. Tente novamente.", "error");
+      console.error("Erro ao criar chá");
+    }
   };
 
   return (
@@ -153,15 +181,44 @@ export function EventSelector() {
                   <FormField
                     control={form.control}
                     name="date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Data</FormLabel>
-                        <FormControl>
-                          <Input placeholder="15/03/2026" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      // Converte DD/MM/YYYY para YYYY-MM-DD para o DatePicker
+                      const convertToYYYYMMDD = (ddmmyyyy: string): string => {
+                        if (!ddmmyyyy) return "";
+                        const parts = ddmmyyyy.split("/");
+                        if (parts.length === 3) {
+                          return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                        }
+                        return ddmmyyyy;
+                      };
+
+                      // Converte YYYY-MM-DD para DD/MM/YYYY para o formulário
+                      const convertToDDMMYYYY = (yyyymmdd: string): string => {
+                        if (!yyyymmdd) return "";
+                        const date = new Date(yyyymmdd + "T00:00:00");
+                        if (isNaN(date.getTime())) return yyyymmdd;
+                        const day = String(date.getDate()).padStart(2, "0");
+                        const month = String(date.getMonth() + 1).padStart(2, "0");
+                        const year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                      };
+
+                      return (
+                        <FormItem>
+                          <FormLabel>Data</FormLabel>
+                          <FormControl>
+                            <DatePicker
+                              value={convertToYYYYMMDD(field.value || "")}
+                              onChange={(value) => {
+                                field.onChange(convertToDDMMYYYY(value));
+                              }}
+                              placeholder="DD/MM/AAAA"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <FormField
@@ -171,7 +228,11 @@ export function EventSelector() {
                       <FormItem>
                         <FormLabel>Horário</FormLabel>
                         <FormControl>
-                          <Input placeholder="15:00" {...field} />
+                          <TimePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="Selecione o horário"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

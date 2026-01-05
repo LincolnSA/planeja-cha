@@ -84,14 +84,12 @@ export function InviteModal({
   };
 
   const handleConfirmPresence = (
-    selectedGiftId: string | null,
-    customGift?: string
+    selectedGifts: Array<{ id: string | null; customGift?: string }>
   ) => {
-    // Aqui você salvaria a confirmação de presença e a escolha do presente
+    // Aqui você salvaria a confirmação de presença e a escolha dos presentes
     console.log("Confirmação:", {
       guestName,
-      giftId: selectedGiftId,
-      customGift,
+      selectedGifts,
     });
     // Mostra a tela de confirmação
     setShowConfirmation(true);

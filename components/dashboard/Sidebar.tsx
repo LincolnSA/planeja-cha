@@ -8,6 +8,7 @@ import { Clock, BarChart3, Users, Gift, Settings, Copy, LogOut } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { EventSelector } from "@/components/dashboard/EventSelector";
 import { EventContext } from "@/contexts/EventContext";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -37,11 +38,14 @@ export function Sidebar() {
   const pathname = usePathname();
   const eventContext = useContext(EventContext);
   const currentEvent = eventContext?.currentEvent || null;
+  const { showToast } = useToast();
 
   const copyInviteLink = () => {
     if (currentEvent) {
       navigator.clipboard.writeText(currentEvent.inviteLink);
-      // Você pode adicionar um toast aqui para feedback
+      showToast("Link do convite copiado!", "success");
+    } else {
+      showToast("Nenhum chá selecionado", "error");
     }
   };
 
@@ -64,31 +68,33 @@ export function Sidebar() {
       <EventSelector />
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-4 py-4">
-        {navigation.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-green-600 text-white"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              <Icon className="h-5 w-5" />
-              {item.name}
-            </Link>
-          );
-        })}
-      </nav>
+      {currentEvent && (
+        <nav className="flex-1 space-y-1 px-4 py-4">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-green-600 text-white"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
 
       {/* Invite Link */}
       {currentEvent && (
-        <div className="border-t border-border p-4">
+        <div className="mt-auto border-t border-border p-4">
           <div className="mb-2 text-xs font-medium text-muted-foreground">
             Link do convite
           </div>
@@ -107,25 +113,28 @@ export function Sidebar() {
           </div>
         </div>
       )}
-      {!currentEvent && eventContext && eventContext.events.length === 0 && (
-        <div className="border-t border-border p-4">
-          <p className="text-xs text-muted-foreground text-center">
-            Crie seu primeiro chá para começar
-          </p>
-        </div>
-      )}
 
-      {/* Logout */}
-      <div className="border-t border-border p-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full cursor-pointer"
-          onClick={async () => await signOut({ callbackUrl: "/" })}
-        >
-          <LogOut className="h-3 w-3" />
-          Sair da conta
-        </Button>
+      <div className="mt-auto">
+        {!currentEvent && eventContext && eventContext.events.length === 0 && (
+          <div className="border-t border-border p-4">
+            <p className="text-xs text-muted-foreground text-center">
+              Crie seu primeiro chá para começar
+            </p>
+          </div>
+        )}
+
+        {/* Logout */}
+        <div className="border-t border-border p-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full cursor-pointer"
+            onClick={async () => await signOut({ callbackUrl: "/" })}
+          >
+            <LogOut className="h-3 w-3" />
+            Sair da conta
+          </Button>
+        </div>
       </div>
     </div>
   );

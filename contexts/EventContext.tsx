@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { getTeas, createTea, updateTea, deleteTea } from "@/actions/tea";
+import type { CreateTeaInput } from "@/actions/tea/validate-tea-input";
 
 export interface EventSettings {
   id: string;
@@ -20,56 +22,97 @@ interface EventContextType {
   currentEventId: string | null;
   currentEvent: EventSettings | null;
   setCurrentEvent: (eventId: string) => void;
-  createEvent: (eventData: Omit<EventSettings, "id" | "createdAt" | "inviteLink">) => string;
-  updateEvent: (eventId: string, settings: Partial<EventSettings>) => void;
-  deleteEvent: (eventId: string) => void;
+  createEvent: (eventData: Omit<EventSettings, "id" | "createdAt" | "inviteLink">) => Promise<string | null>;
+  updateEvent: (eventId: string, settings: Partial<EventSettings>) => Promise<void>;
+  deleteEvent: (eventId: string) => Promise<void>;
   getEventById: (eventId: string) => EventSettings | undefined;
+  refreshEvents: () => Promise<void>;
 }
-
-// Não usar eventos padrão - deixar o usuário criar o primeiro
-const defaultEvents: EventSettings[] = [];
 
 export const EventContext = createContext<EventContextType | undefined>(undefined);
 
+/**
+ * Converte Tea do banco para EventSettings do contexto
+ */
+function mapTeaToEventSettings(tea: {
+  id: string;
+  name: string;
+  parentsName: string;
+  date: string;
+  time: Date;
+  location: string;
+  customMessage: string;
+  maxCompanionsPerGuest: number;
+  inviteLink: string;
+  createdAt: Date;
+}): EventSettings {
+  // Converte Date para string no formato HH:MM
+  const timeString = tea.time instanceof Date 
+    ? `${String(tea.time.getHours()).padStart(2, '0')}:${String(tea.time.getMinutes()).padStart(2, '0')}`
+    : String(tea.time);
+
+  // Converte YYYY-MM-DD para DD/MM/YYYY
+  const convertToDDMMYYYY = (yyyymmdd: string): string => {
+    if (!yyyymmdd) return "";
+    // Se já está no formato DD/MM/YYYY, retorna como está
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(yyyymmdd)) {
+      return yyyymmdd;
+    }
+    // Converte YYYY-MM-DD para DD/MM/YYYY
+    const date = new Date(yyyymmdd + "T00:00:00");
+    if (isNaN(date.getTime())) return yyyymmdd;
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  return {
+    id: tea.id,
+    eventName: tea.name,
+    parentsName: tea.parentsName,
+    date: convertToDDMMYYYY(tea.date),
+    time: timeString,
+    location: tea.location,
+    customMessage: tea.customMessage,
+    maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
+    inviteLink: tea.inviteLink,
+    createdAt: tea.createdAt.toISOString(),
+  };
+}
+
 export function EventProvider({ children }: { children: ReactNode }) {
-  const [events, setEvents] = useState<EventSettings[]>(() => {
-    // Carregar do localStorage se existir
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("planeja-cha-events");
-      if (stored) {
-        try {
-          return JSON.parse(stored);
-        } catch {
-          return defaultEvents;
+  const [events, setEvents] = useState<EventSettings[]>([]);
+  const [currentEventId, setCurrentEventId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Carrega eventos do banco na inicialização
+  const loadEvents = async () => {
+    try {
+      setIsLoading(true);
+      const teas = await getTeas();
+      const mappedEvents = teas.map(mapTeaToEventSettings);
+      setEvents(mappedEvents);
+      
+      // Se não há evento selecionado e há eventos, seleciona o primeiro
+      setCurrentEventId((prevId) => {
+        if (!prevId && mappedEvents.length > 0) {
+          return mappedEvents[0].id;
         }
-      }
+        return prevId;
+      });
+    } catch (error) {
+      console.error("Erro ao carregar eventos:", error);
+      setEvents([]);
+    } finally {
+      setIsLoading(false);
     }
-    return defaultEvents;
-  });
-
-  const [currentEventId, setCurrentEventId] = useState<string | null>(() => {
-    // Carregar do localStorage se existir
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("planeja-cha-current-event");
-      if (stored) {
-        return stored;
-      }
-    }
-    return events.length > 0 ? events[0].id : null;
-  });
-
-  // Salvar no localStorage quando mudar
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("planeja-cha-events", JSON.stringify(events));
-    }
-  }, [events]);
+  };
 
   useEffect(() => {
-    if (typeof window !== "undefined" && currentEventId) {
-      localStorage.setItem("planeja-cha-current-event", currentEventId);
-    }
-  }, [currentEventId]);
+    loadEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const currentEvent = events.find((e) => e.id === currentEventId) || null;
 
@@ -79,36 +122,117 @@ export function EventProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createEvent = (
+  const createEvent = async (
     eventData: Omit<EventSettings, "id" | "createdAt" | "inviteLink">
-  ): string => {
-    const newEvent: EventSettings = {
-      ...eventData,
-      id: Date.now().toString(),
-      inviteLink: `http://localhost:8080/convite/${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    };
-    setEvents((prev) => [...prev, newEvent]);
-    setCurrentEventId(newEvent.id);
-    return newEvent.id;
+  ): Promise<string | null> => {
+    try {
+      // Converte DD/MM/YYYY para YYYY-MM-DD para a action
+      const convertToYYYYMMDD = (ddmmyyyy: string): string => {
+        if (!ddmmyyyy) return "";
+        const parts = ddmmyyyy.split("/");
+        if (parts.length === 3) {
+          return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        // Se já está no formato YYYY-MM-DD, retorna como está
+        return ddmmyyyy;
+      };
+
+      const input: CreateTeaInput = {
+        name: eventData.eventName,
+        parentsName: eventData.parentsName,
+        date: convertToYYYYMMDD(eventData.date),
+        time: eventData.time,
+        location: eventData.location,
+        customMessage: eventData.customMessage || "",
+        maxCompanionsPerGuest: eventData.maxCompanionsPerGuest,
+      };
+
+      const result = await createTea(input);
+      
+      if (result.success) {
+        const newEvent = mapTeaToEventSettings(result.data);
+        setEvents((prev) => [...prev, newEvent]);
+        setCurrentEventId(newEvent.id);
+        // Recarrega os eventos do banco para garantir sincronização
+        await loadEvents();
+        return newEvent.id;
+      } else {
+        // Log do erro para debug
+        console.error("Erro ao criar chá:", result.error);
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("Erro ao criar evento:", error);
+      return null;
+    }
   };
 
-  const updateEvent = (eventId: string, settings: Partial<EventSettings>) => {
-    setEvents((prev) =>
-      prev.map((event) => (event.id === eventId ? { ...event, ...settings } : event))
-    );
+  const updateEvent = async (
+    eventId: string,
+    settings: Partial<EventSettings>
+  ): Promise<void> => {
+    try {
+      // Converte DD/MM/YYYY para YYYY-MM-DD para a action
+      const convertToYYYYMMDD = (ddmmyyyy: string): string => {
+        if (!ddmmyyyy) return "";
+        const parts = ddmmyyyy.split("/");
+        if (parts.length === 3) {
+          return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        // Se já está no formato YYYY-MM-DD, retorna como está
+        return ddmmyyyy;
+      };
+
+      const updateData: any = {};
+      
+      if (settings.eventName !== undefined) updateData.name = settings.eventName;
+      if (settings.parentsName !== undefined) updateData.parentsName = settings.parentsName;
+      if (settings.date !== undefined) updateData.date = convertToYYYYMMDD(settings.date);
+      if (settings.time !== undefined) updateData.time = settings.time;
+      if (settings.location !== undefined) updateData.location = settings.location;
+      if (settings.customMessage !== undefined) updateData.customMessage = settings.customMessage;
+      if (settings.maxCompanionsPerGuest !== undefined) {
+        updateData.maxCompanionsPerGuest = settings.maxCompanionsPerGuest;
+      }
+
+      const updated = await updateTea(eventId, updateData);
+      
+      if (updated) {
+        const updatedEvent = mapTeaToEventSettings(updated);
+        setEvents((prev) =>
+          prev.map((event) => (event.id === eventId ? updatedEvent : event))
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar evento:", error);
+    }
   };
 
-  const deleteEvent = (eventId: string) => {
-    setEvents((prev) => prev.filter((event) => event.id !== eventId));
-    if (currentEventId === eventId) {
-      const remainingEvents = events.filter((event) => event.id !== eventId);
-      setCurrentEventId(remainingEvents.length > 0 ? remainingEvents[0].id : null);
+  const deleteEvent = async (eventId: string): Promise<void> => {
+    try {
+      const success = await deleteTea(eventId);
+      
+      if (success) {
+        setEvents((prev) => prev.filter((event) => event.id !== eventId));
+        
+        // Se o evento deletado era o atual, seleciona outro
+        if (currentEventId === eventId) {
+          const remainingEvents = events.filter((event) => event.id !== eventId);
+          setCurrentEventId(remainingEvents.length > 0 ? remainingEvents[0].id : null);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao deletar evento:", error);
     }
   };
 
   const getEventById = (eventId: string) => {
     return events.find((e) => e.id === eventId);
+  };
+
+  const refreshEvents = async () => {
+    await loadEvents();
   };
 
   return (
@@ -122,6 +246,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
         updateEvent,
         deleteEvent,
         getEventById,
+        refreshEvents,
       }}
     >
       {children}
@@ -140,10 +265,10 @@ export function useEvent() {
   return {
     ...context,
     settings: context.currentEvent, // Para manter compatibilidade com código existente
-    updateSettings: (settings: Partial<EventSettings>) => {
+    updateSettings: async (settings: Partial<EventSettings>) => {
       // Wrapper para manter compatibilidade
       if (context.currentEventId) {
-        context.updateEvent(context.currentEventId, settings);
+        await context.updateEvent(context.currentEventId, settings);
       }
     },
   };

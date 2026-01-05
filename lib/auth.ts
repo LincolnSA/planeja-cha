@@ -12,4 +12,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   })],
   adapter: PrismaAdapter(prisma),
+  callbacks: {
+    session: async ({ session, user }) => {
+      if (session.user && user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
 })

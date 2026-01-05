@@ -20,6 +20,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  teas      Tea[]
 }
 
 model Account {
@@ -75,4 +76,22 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+model Tea {
+  id                    String   @id @default(cuid())
+  name                  String
+  parentsName           String   @map("parents_name")
+  date                  String
+  time                  DateTime
+  location              String
+  customMessage         String   @map("custom_message")
+  maxCompanionsPerGuest Int      @map("max_companions_per_guest")
+  inviteLink            String   @map("invite_link")
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }

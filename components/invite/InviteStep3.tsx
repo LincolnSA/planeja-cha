@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -18,10 +18,15 @@ interface Gift {
   chosen: number;
 }
 
+interface SelectedGift {
+  id: string | null;
+  customGift?: string;
+}
+
 interface InviteStep3Props {
   gifts: Gift[];
   onBack: () => void;
-  onConfirm: (selectedGiftId: string | null, customGift?: string) => void;
+  onConfirm: (selectedGifts: SelectedGift[]) => void;
 }
 
 export function InviteStep3({
@@ -29,9 +34,9 @@ export function InviteStep3({
   onBack,
   onConfirm,
 }: InviteStep3Props) {
-  const [selectedGift, setSelectedGift] = useState<string>("");
+  const [selectedGifts, setSelectedGifts] = useState<Set<string>>(new Set());
   const [customGift, setCustomGift] = useState<string>("");
-  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [isCustomSelected, setIsCustomSelected] = useState(false);
 
   const getGiftStatus = (gift: Gift) => {
     const remaining = gift.quantity - gift.chosen;
@@ -40,120 +45,155 @@ export function InviteStep3({
     return { label: "Disponível", variant: "success" as const };
   };
 
-  const handleGiftSelect = (value: string) => {
-    setSelectedGift(value);
-    if (value === "custom") {
-      setShowCustomInput(true);
-    } else {
-      setShowCustomInput(false);
-      setCustomGift("");
-    }
+  const handleGiftToggle = (giftId: string) => {
+    setSelectedGifts((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(giftId)) {
+        newSet.delete(giftId);
+      } else {
+        newSet.add(giftId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleCustomToggle = () => {
+    setIsCustomSelected((prev) => {
+      if (!prev) {
+        // Se está selecionando, mostra o input
+        return true;
+      } else {
+        // Se está desmarcando, limpa o input
+        setCustomGift("");
+        return false;
+      }
+    });
   };
 
   const handleConfirm = () => {
-    if (selectedGift === "custom") {
-      onConfirm(null, customGift);
-    } else if (selectedGift) {
-      onConfirm(selectedGift);
-    } else {
-      onConfirm(null);
+    const selected: SelectedGift[] = [];
+    
+    // Adiciona presentes selecionados
+    selectedGifts.forEach((giftId) => {
+      selected.push({ id: giftId });
+    });
+    
+    // Adiciona presente customizado se selecionado e preenchido
+    if (isCustomSelected && customGift.trim()) {
+      selected.push({ id: null, customGift: customGift.trim() });
     }
+    
+    onConfirm(selected);
   };
 
   return (
     <div className="space-y-6">
       <Card className="shadow-md">
         <CardContent className="p-6">
-          <RadioGroup value={selectedGift} onValueChange={handleGiftSelect}>
-            <div className="space-y-4">
-              {gifts.map((gift) => {
-                const status = getGiftStatus(gift);
-                const remaining = gift.quantity - gift.chosen;
-                const isAvailable = remaining > 0;
+          <div className="space-y-4">
+            {gifts.map((gift) => {
+              const status = getGiftStatus(gift);
+              const remaining = gift.quantity - gift.chosen;
+              const isAvailable = remaining > 0;
+              const isSelected = selectedGifts.has(gift.id);
 
-                return (
-                  <div
-                    key={gift.id}
-                    onClick={() => isAvailable && handleGiftSelect(gift.id)}
-                    className={cn(
-                      "flex items-start gap-4 rounded-lg border p-4 transition-colors cursor-pointer",
-                      selectedGift === gift.id
-                        ? "border-green-600 bg-green-50"
-                        : "border-border hover:border-green-300",
-                      !isAvailable && "opacity-50 cursor-not-allowed"
-                    )}
-                  >
-                    <RadioGroupItem
-                      value={gift.id}
-                      id={gift.id}
-                      disabled={!isAvailable}
-                      className="mt-1"
-                    />
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <Label
-                            htmlFor={gift.id}
-                            className="text-base font-semibold text-foreground cursor-pointer"
-                          >
-                            {gift.title}
-                          </Label>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {gift.description}
-                          </p>
-                        </div>
-                        <Badge variant={status.variant} className="shrink-0">
-                          {status.label}
-                        </Badge>
-                      </div>
-                      {isAvailable && (
-                        <p className="text-xs text-muted-foreground">
-                          {remaining} disponíveis
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Custom Gift Option */}
-              <div
-                onClick={() => handleGiftSelect("custom")}
-                className={cn(
-                  "flex items-start gap-4 rounded-lg border p-4 transition-colors cursor-pointer hover:border-green-300",
-                  selectedGift === "custom"
-                    ? "border-green-600 bg-green-50"
-                    : "border-border"
-                )}
-              >
-                <RadioGroupItem value="custom" id="custom" className="mt-1" />
-                <div className="flex-1 space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <Label
-                      htmlFor="custom"
-                      className="text-base font-semibold text-foreground cursor-pointer"
-                    >
-                      Outro presente
-                    </Label>
-                    <Badge variant="success" className="shrink-0">
-                      Personalizado
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Digite o presente que você gostaria de dar
-                  </p>
-                  {showCustomInput && (
-                    <Input
-                      placeholder="Digite o nome do presente"
-                      value={customGift}
-                      onChange={(e) => setCustomGift(e.target.value)}
-                      className="mt-2"
-                    />
+              return (
+                <div
+                  key={gift.id}
+                  onClick={() => isAvailable && handleGiftToggle(gift.id)}
+                  className={cn(
+                    "flex items-start gap-4 rounded-lg border p-4 transition-colors cursor-pointer",
+                    isSelected
+                      ? "border-green-600 bg-green-50"
+                      : "border-border hover:border-green-300",
+                    !isAvailable && "opacity-50 cursor-not-allowed"
                   )}
+                >
+                  <Checkbox
+                    checked={isSelected}
+                    disabled={!isAvailable}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      if (isAvailable) {
+                        handleGiftToggle(gift.id);
+                      }
+                    }}
+                    className="mt-1"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <Label
+                          htmlFor={gift.id}
+                          className="text-base font-semibold text-foreground cursor-pointer"
+                        >
+                          {gift.title}
+                        </Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {gift.description}
+                        </p>
+                      </div>
+                      <Badge variant={status.variant} className="shrink-0">
+                        {status.label}
+                      </Badge>
+                    </div>
+                    {isAvailable && (
+                      <p className="text-xs text-muted-foreground">
+                        {remaining} disponíveis
+                      </p>
+                    )}
+                  </div>
                 </div>
+              );
+            })}
+
+            {/* Custom Gift Option */}
+            <div
+              onClick={handleCustomToggle}
+              className={cn(
+                "flex items-start gap-4 rounded-lg border p-4 transition-colors cursor-pointer hover:border-green-300",
+                isCustomSelected
+                  ? "border-green-600 bg-green-50"
+                  : "border-border"
+              )}
+            >
+              <Checkbox
+                checked={isCustomSelected}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  handleCustomToggle();
+                }}
+                className="mt-1"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div className="flex-1 space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <Label
+                    htmlFor="custom"
+                    className="text-base font-semibold text-foreground cursor-pointer"
+                  >
+                    Outro presente
+                  </Label>
+                  <Badge variant="success" className="shrink-0">
+                    Personalizado
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Digite o presente que você gostaria de dar
+                </p>
+                {isCustomSelected && (
+                  <Input
+                    placeholder="Digite o nome do presente"
+                    value={customGift}
+                    onChange={(e) => setCustomGift(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-2"
+                  />
+                )}
               </div>
             </div>
-          </RadioGroup>
+          </div>
         </CardContent>
       </Card>
 
@@ -180,7 +220,7 @@ export function InviteStep3({
         <Button
           type="button"
           variant="ghost"
-          onClick={() => onConfirm(null)}
+          onClick={() => onConfirm([])}
           className="w-full text-muted-foreground hover:text-foreground"
         >
           Confirmar sem escolher presente
