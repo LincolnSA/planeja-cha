@@ -78,6 +78,15 @@ export default function InvitePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teaId, mounted]);
 
+  // Atualizar título da página
+  useEffect(() => {
+    if (tea?.name) {
+      document.title = `Planeja Chá - ${tea.name}`;
+    } else {
+      document.title = "Planeja Chá";
+    }
+  }, [tea?.name]);
+
   const handleNext = (name?: string) => {
     if (name) {
       setGuestName(name);
