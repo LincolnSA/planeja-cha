@@ -351,7 +351,7 @@ function InviteStep1Wrapper({
           {settings.eventName}
         </h1>
         <p className="text-center text-lg text-muted-foreground font-serif">
-          {settings.parentsName}
+          Papais: {settings.parentsName}
         </p>
       </div>
 

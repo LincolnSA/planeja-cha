@@ -26,7 +26,7 @@ export function InviteStep1({ onNext, currentStep = 1 }: InviteStep1Props) {
           {settings.eventName}
         </h1>
         <p className="text-center text-base sm:text-lg text-muted-foreground font-serif px-2">
-          {settings.parentsName}
+          Papais: {settings.parentsName}
         </p>
       </div>
 
