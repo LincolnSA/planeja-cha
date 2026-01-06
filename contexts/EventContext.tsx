@@ -14,6 +14,7 @@ export interface EventSettings {
   customMessage: string;
   maxCompanionsPerGuest: number;
   inviteLink: string;
+  isActive: boolean;
   createdAt: string;
 }
 
@@ -44,6 +45,7 @@ function mapTeaToEventSettings(tea: {
   customMessage: string;
   maxCompanionsPerGuest: number;
   inviteLink: string;
+  isActive: boolean;
   createdAt: Date;
 }): EventSettings {
   // Converte Date para string no formato HH:MM
@@ -77,6 +79,7 @@ function mapTeaToEventSettings(tea: {
     customMessage: tea.customMessage,
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
     inviteLink: tea.inviteLink,
+    isActive: tea.isActive,
     createdAt: tea.createdAt.toISOString(),
   };
 }

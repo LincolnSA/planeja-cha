@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { SettingsHeader } from "@/components/dashboard/SettingsHeader";
 import { EventInfoForm } from "@/components/dashboard/EventInfoForm";
 import { GuestSettingsForm } from "@/components/dashboard/GuestSettingsForm";
+import { TeaStatusSwitch } from "@/components/dashboard/TeaStatusSwitch";
 import { InviteModal } from "@/components/dashboard/InviteModal";
 import { DeleteTeaModal } from "@/components/dashboard/DeleteTeaModal";
 import { WelcomeScreen } from "@/components/dashboard/WelcomeScreen";
@@ -62,6 +63,8 @@ export default function SettingsPage() {
       <EventInfoForm />
 
       <GuestSettingsForm />
+
+      <TeaStatusSwitch />
 
       {/* Seção de Excluir Chá */}
       <Card className="border-red-200">

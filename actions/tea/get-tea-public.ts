@@ -11,6 +11,7 @@ export interface PublicTea {
   location: string;
   customMessage: string;
   maxCompanionsPerGuest: number;
+  isActive: boolean;
 }
 
 /**
@@ -70,6 +71,7 @@ export async function getTeaPublic(teaId: string): Promise<PublicTea | null> {
     location: tea.location,
     customMessage: tea.customMessage,
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
+    isActive: tea.isActive,
   };
 }
 

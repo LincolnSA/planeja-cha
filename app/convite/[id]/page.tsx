@@ -61,6 +61,9 @@ export default function InvitePage() {
         ]);
 
         if (teaData) {
+          if (!teaData.isActive) {
+            showToast("As confirmações para este chá foram encerradas.", "error");
+          }
           setTea(teaData);
           setGifts(giftsData);
         } else {
@@ -202,7 +205,33 @@ export default function InvitePage() {
       <div className="flex-1 py-6 sm:py-8 md:py-12">
         <div className="mx-auto max-w-4xl px-4">
           <div className="rounded-lg">
-            {showConfirmation ? (
+            {!tea.isActive ? (
+              <div className="flex flex-col items-center space-y-6 py-12 px-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
+                  <Heart className="h-8 w-8 text-yellow-600" />
+                </div>
+                <div className="text-center space-y-2">
+                  <h2 className="text-2xl font-bold text-foreground">
+                    Confirmações Encerradas
+                  </h2>
+                  <p className="text-muted-foreground max-w-md">
+                    As confirmações para este chá de bebê foram encerradas. 
+                    Entre em contato com os organizadores para mais informações.
+                  </p>
+                </div>
+                <Card className="w-full max-w-md shadow-md">
+                  <CardContent className="p-6">
+                    <div className="space-y-2 text-center">
+                      <p className="font-semibold text-foreground">{settings.eventName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {settings.date} às {settings.time}
+                      </p>
+                      <p className="text-sm text-muted-foreground">{settings.location}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : showConfirmation ? (
               <InviteConfirmationWrapper
                 guestName={guestName}
                 settings={settings}

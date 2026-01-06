@@ -13,6 +13,7 @@ export interface Tea {
   customMessage: string;
   maxCompanionsPerGuest: number;
   inviteLink: string;
+  isActive: boolean;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -40,6 +41,7 @@ export async function getTeas(): Promise<Tea[]> {
     customMessage: tea.customMessage,
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
     inviteLink: tea.inviteLink,
+    isActive: tea.isActive,
     userId: tea.userId,
     createdAt: tea.createdAt,
     updatedAt: tea.updatedAt,

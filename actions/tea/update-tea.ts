@@ -12,6 +12,7 @@ export interface UpdateTeaInput {
   location?: string;
   customMessage?: string;
   maxCompanionsPerGuest?: number;
+  isActive?: boolean;
 }
 
 export interface Tea {
@@ -24,6 +25,7 @@ export interface Tea {
   customMessage: string;
   maxCompanionsPerGuest: number;
   inviteLink: string;
+  isActive: boolean;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -61,6 +63,7 @@ export async function updateTea(
   if (input.maxCompanionsPerGuest !== undefined) {
     updateData.maxCompanionsPerGuest = input.maxCompanionsPerGuest;
   }
+  if (input.isActive !== undefined) updateData.isActive = input.isActive;
 
   // Se date ou time foram fornecidos, normaliza o time
   if (input.date !== undefined || input.time !== undefined) {
@@ -87,6 +90,7 @@ export async function updateTea(
     customMessage: updatedTea.customMessage,
     maxCompanionsPerGuest: updatedTea.maxCompanionsPerGuest,
     inviteLink: updatedTea.inviteLink,
+    isActive: updatedTea.isActive,
     userId: updatedTea.userId,
     createdAt: updatedTea.createdAt,
     updatedAt: updatedTea.updatedAt,

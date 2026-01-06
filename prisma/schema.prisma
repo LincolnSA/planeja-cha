@@ -151,6 +151,7 @@ model Tea {
   customMessage         String   @map("custom_message")
   maxCompanionsPerGuest Int      @map("max_companions_per_guest")
   inviteLink            String   @map("invite_link")
+  isActive              Boolean  @default(true) @map("is_active")
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
