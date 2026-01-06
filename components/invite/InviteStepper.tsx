@@ -28,9 +28,9 @@ export function InviteStepper({ currentStep }: InviteStepperProps) {
                 className={cn(
                   "flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-semibold transition-colors",
                   isCompleted &&
-                    "bg-green-600 text-white",
+                    "bg-orange-600 text-white",
                   isCurrent &&
-                    "bg-green-600 text-white",
+                    "bg-orange-600 text-white",
                   isFuture &&
                     "bg-gray-200 text-gray-500"
                 )}
@@ -56,7 +56,7 @@ export function InviteStepper({ currentStep }: InviteStepperProps) {
               <div
                 className={cn(
                   "h-0.5 w-4 sm:w-8 transition-colors",
-                  isCompleted ? "bg-green-600" : "bg-gray-200"
+                  isCompleted ? "bg-orange-600" : "bg-gray-200"
                 )}
               />
             )}

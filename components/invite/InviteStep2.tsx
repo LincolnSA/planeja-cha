@@ -80,8 +80,8 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col items-center gap-3 sm:gap-4">
-        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-green-100 shrink-0">
-          <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
+        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-orange-100 shrink-0">
+          <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
         </div>
         <h2 className="text-center text-xl sm:text-2xl font-bold text-foreground px-2">
           Confirmação de Presença
@@ -99,7 +99,7 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
               {/* Seus dados */}
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0" />
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 shrink-0" />
                   <h3 className="text-base sm:text-lg font-semibold text-foreground">
                     Seus dados
                   </h3>
@@ -123,7 +123,7 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
               <div className="space-y-3 sm:space-y-4 border-t pt-4 sm:pt-6">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0" />
+                    <Users className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 shrink-0" />
                     <h3 className="text-base sm:text-lg font-semibold text-foreground">
                       Acompanhantes
                     </h3>
@@ -176,7 +176,7 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
                     type="button"
                     variant="outline"
                     onClick={handleAddCompanion}
-                    className="w-full border-green-600 text-green-600 hover:bg-green-50 text-sm sm:text-base"
+                    className="w-full border-orange-600 text-orange-600 hover:bg-orange-50 text-sm sm:text-base"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Adicionar acompanhante
@@ -190,14 +190,14 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
                   type="button"
                   variant="outline"
                   onClick={onBack}
-                  className="flex-1 border-green-600 text-green-600 hover:bg-green-50 text-sm sm:text-base"
+                  className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 text-sm sm:text-base"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Voltar
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
+                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm sm:text-base"
                 >
                   <span className="hidden sm:inline">Continuar para presentes</span>
                   <span className="sm:hidden">Continuar</span>

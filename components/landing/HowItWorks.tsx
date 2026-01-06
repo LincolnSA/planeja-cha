@@ -46,7 +46,7 @@ export function HowItWorks() {
           {/* Title */}
           <h2 className="mb-4 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Simples assim, em{" "}
-            <span className="text-green-600">4 passos</span>
+            <span className="text-orange-600">4 passos</span>
           </h2>
 
           {/* Subtitle */}
@@ -58,7 +58,7 @@ export function HowItWorks() {
           {/* Steps */}
           <div className="relative">
             {/* Connecting line */}
-            <div className="absolute left-0 right-0 top-6 hidden h-0.5 bg-green-200 md:block" />
+            <div className="absolute left-0 right-0 top-6 hidden h-0.5 bg-orange-200 md:block" />
 
             <div className="grid gap-8 md:grid-cols-4">
               {steps.map((step, index) => {
@@ -67,7 +67,7 @@ export function HowItWorks() {
                   <div key={index} className="relative">
                     {/* Number circle */}
                     <div className="mb-6 flex justify-center">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600 text-white">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white">
                         <span className="text-lg font-semibold">
                           {step.number}
                         </span>
@@ -76,8 +76,8 @@ export function HowItWorks() {
 
                     {/* Card */}
                     <div className="rounded-lg bg-card p-6 shadow-sm border border-border">
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                        <Icon className="h-6 w-6 text-green-600" />
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+                        <Icon className="h-6 w-6 text-orange-600" />
                       </div>
                       <h3 className="mb-2 text-xl font-semibold text-foreground">
                         {step.title}

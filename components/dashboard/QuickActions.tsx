@@ -68,7 +68,7 @@ export function QuickActions() {
         <div className="flex flex-col gap-3">
           <Button
             variant="outline"
-            className="flex-1 border-green-600 text-green-600 hover:bg-green-50"
+            className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50"
             onClick={handleAddGift}
           >
             <Gift className="mr-2 h-4 w-4" />
@@ -76,7 +76,7 @@ export function QuickActions() {
           </Button>
           <Button
             variant="outline"
-            className="flex-1 border-green-600 text-green-600 hover:bg-green-50"
+            className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50"
             onClick={copyInviteLink}
           >
             <Copy className="mr-2 h-4 w-4" />
@@ -84,7 +84,7 @@ export function QuickActions() {
           </Button>
           <Button
             variant="outline"
-            className="flex-1 border-green-600 text-green-600 hover:bg-green-50"
+            className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50"
             onClick={handleGeneratePDF}
             disabled={isGeneratingPDF}
           >

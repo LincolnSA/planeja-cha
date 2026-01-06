@@ -6,7 +6,7 @@ interface MetricCardProps {
   icon: LucideIcon;
   value: string | number;
   label: string;
-  variant?: "default" | "green";
+  variant?: "default" | "orange";
 }
 
 export function MetricCard({
@@ -19,22 +19,22 @@ export function MetricCard({
     <Card
       className={cn(
         "p-6",
-        variant === "green" && "bg-green-600 border-green-600 text-white"
+        variant === "orange" && "bg-orange-600 border-orange-600 text-white"
       )}
     >
       <div className="flex flex-col gap-4">
         <div
           className={cn(
             "flex h-12 w-12 items-center justify-center rounded-lg",
-            variant === "green"
+            variant === "orange"
               ? "bg-white/20"
-              : "bg-green-100"
+              : "bg-orange-100"
           )}
         >
           <Icon
             className={cn(
               "h-6 w-6",
-              variant === "green" ? "text-white" : "text-green-600"
+              variant === "orange" ? "text-white" : "text-orange-600"
             )}
           />
         </div>
@@ -42,7 +42,7 @@ export function MetricCard({
           <div
             className={cn(
               "text-3xl font-bold",
-              variant === "green" ? "text-white" : "text-foreground"
+              variant === "orange" ? "text-white" : "text-foreground"
             )}
           >
             {value}
@@ -50,7 +50,7 @@ export function MetricCard({
           <div
             className={cn(
               "text-sm",
-              variant === "green" ? "text-white/90" : "text-muted-foreground"
+              variant === "orange" ? "text-white/90" : "text-muted-foreground"
             )}
           >
             {label}

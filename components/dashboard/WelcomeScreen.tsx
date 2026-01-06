@@ -104,8 +104,8 @@ export function WelcomeScreen() {
         <CardContent className="p-8 sm:p-12">
           <div className="flex flex-col items-center text-center space-y-6">
             {/* Icon */}
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-              <Baby className="h-10 w-10 text-green-600" />
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-orange-100">
+              <Baby className="h-10 w-10 text-orange-600" />
             </div>
 
             {/* Title */}
@@ -120,20 +120,20 @@ export function WelcomeScreen() {
 
             {/* Features */}
             <div className="grid gap-4 sm:grid-cols-3 w-full mt-8">
-              <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-green-50">
-                <Users className="h-8 w-8 text-green-600" />
+              <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-orange-50">
+                <Users className="h-8 w-8 text-orange-600" />
                 <p className="text-sm font-medium text-foreground">
                   Gerencie Convidados
                 </p>
               </div>
-              <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-green-50">
-                <Gift className="h-8 w-8 text-green-600" />
+              <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-orange-50">
+                <Gift className="h-8 w-8 text-orange-600" />
                 <p className="text-sm font-medium text-foreground">
                   Organize Presentes
                 </p>
               </div>
-              <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-green-50">
-                <Calendar className="h-8 w-8 text-green-600" />
+              <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-orange-50">
+                <Calendar className="h-8 w-8 text-orange-600" />
                 <p className="text-sm font-medium text-foreground">
                   Acompanhe Confirmações
                 </p>
@@ -145,7 +145,7 @@ export function WelcomeScreen() {
               <DialogTrigger asChild>
                 <Button
                   size="lg"
-                  className="bg-green-600 hover:bg-green-700 text-white px-8 mt-4"
+                  className="bg-orange-600 hover:bg-orange-700 text-white px-8 mt-4"
                 >
                   <Sparkles className="mr-2 h-5 w-5" />
                   Criar meu primeiro chá
@@ -326,7 +326,7 @@ export function WelcomeScreen() {
                       </Button>
                       <Button
                         type="submit"
-                        className="flex-1 bg-green-600 hover:bg-green-700"
+                        className="flex-1 bg-orange-600 hover:bg-orange-700"
                       >
                         Criar Chá
                       </Button>

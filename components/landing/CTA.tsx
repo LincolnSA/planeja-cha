@@ -14,9 +14,9 @@ export function CTA() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-2 sm:px-4">
-            <Sparkles className="h-4 w-4 text-green-600 shrink-0" />
-            <span className="text-xs sm:text-sm font-medium text-green-700">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-2 sm:px-4">
+            <Sparkles className="h-4 w-4 text-orange-600 shrink-0" />
+            <span className="text-xs sm:text-sm font-medium text-orange-700">
               Comece gratuitamente
             </span>
           </div>
@@ -24,7 +24,7 @@ export function CTA() {
           {/* Headline */}
           <h2 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl px-2">
             Pronto para criar um{" "}
-            <span className="font-[family-name:var(--font-serif)] italic text-green-600">
+            <span className="font-[family-name:var(--font-serif)] italic text-orange-600">
               momento mágico?
             </span>
           </h2>
@@ -40,7 +40,7 @@ export function CTA() {
             <Button
               onClick={handleSignIn}
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-6 text-sm sm:px-8 sm:text-base cursor-pointer w-full sm:w-auto"
+              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-6 text-sm sm:px-8 sm:text-base cursor-pointer w-full sm:w-auto"
             >
               <span className="hidden sm:inline">Entrar com Google para criar meu planejamento</span>
               <span className="sm:hidden">Entrar com Google</span>

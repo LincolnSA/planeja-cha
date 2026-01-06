@@ -21,7 +21,7 @@ export function GiftsSummary({
       </p>
       <Button
         onClick={onAddGift}
-        className="bg-green-600 hover:bg-green-700 text-white"
+        className="bg-orange-600 hover:bg-orange-700 text-white"
       >
         <Plus className="mr-2 h-4 w-4" />
         Adicionar presente

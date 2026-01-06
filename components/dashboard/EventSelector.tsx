@@ -117,7 +117,7 @@ export function EventSelector() {
             <select
               value={currentEventId || ""}
               onChange={(e) => setCurrentEvent(e.target.value)}
-              className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-8 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2"
+              className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-8 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-orange-600 focus:ring-offset-2"
             >
               {events.map((event) => (
                 <option key={event.id} value={event.id}>
@@ -134,7 +134,7 @@ export function EventSelector() {
             <Button
               variant="outline"
               size="sm"
-              className="w-full border-green-600 text-green-600 hover:bg-green-50"
+              className="w-full border-orange-600 text-orange-600 hover:bg-orange-50"
             >
               <Plus className="mr-2 h-4 w-4" />
               Novo chá
@@ -303,7 +303,7 @@ export function EventSelector() {
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" className="flex-1 bg-green-600 hover:bg-green-700">
+                  <Button type="submit" className="flex-1 bg-orange-600 hover:bg-orange-700">
                     Criar Chá
                   </Button>
                 </div>

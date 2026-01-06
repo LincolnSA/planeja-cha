@@ -60,7 +60,7 @@ export function GuestsTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Gift className="h-4 w-4 text-green-600" />
+                      <Gift className="h-4 w-4 text-orange-600" />
                       <span className="text-sm font-medium">
                         {guest.giftsCount ?? 0}
                       </span>

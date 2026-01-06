@@ -192,7 +192,7 @@ export function AddGiftModal({
               </Button>
               <Button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-orange-600 hover:bg-orange-700 text-white"
               >
                 {isEditMode ? "Salvar" : "Adicionar"}
               </Button>

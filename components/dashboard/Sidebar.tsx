@@ -53,7 +53,7 @@ export function Sidebar() {
     <div className="flex h-screen w-64 flex-col border-r border-border bg-background">
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-green-600">
+        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-orange-600">
           <Clock className="h-5 w-5 text-white" />
         </div>
         <div className="flex flex-col">
@@ -80,7 +80,7 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-green-600 text-white"
+                    ? "bg-orange-600 text-white"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )}
               >

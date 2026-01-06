@@ -15,7 +15,7 @@ export function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           {/* Badge */}
           <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-2 sm:px-4">
-            <Clock className="h-4 w-4 text-green-600 shrink-0" />
+            <Clock className="h-4 w-4 text-orange-600 shrink-0" />
             <span className="text-xs sm:text-sm font-medium text-gray-700">
               A forma mais especial de celebrar
             </span>
@@ -24,7 +24,7 @@ export function Hero() {
           {/* Headline */}
           <h1 className="mb-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl px-2">
             Organize seu{" "}
-            <span className="font-[family-name:var(--font-serif)] italic text-green-600">
+            <span className="font-[family-name:var(--font-serif)] italic text-orange-600">
               Chá de Bebê
             </span>{" "}
             com carinho e praticidade
@@ -41,7 +41,7 @@ export function Hero() {
             <Button
               onClick={handleSignIn}
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-6 text-sm sm:px-8 sm:text-base cursor-pointer w-full sm:w-auto"
+              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-6 text-sm sm:px-8 sm:text-base cursor-pointer w-full sm:w-auto"
             >
               <span className="hidden sm:inline">Entrar com Google para criar meu planejamento</span>
               <span className="sm:hidden">Entrar com Google</span>

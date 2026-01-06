@@ -14,7 +14,7 @@ export function GuestsSummary({
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         <p className="text-sm text-muted-foreground">
           Total de pessoas:{" "}
-          <span className="font-medium text-green-600">{totalPeople}</span>{" "}
+          <span className="font-medium text-orange-600">{totalPeople}</span>{" "}
           (convidados + acompanhantes)
         </p>
       </div>

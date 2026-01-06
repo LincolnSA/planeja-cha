@@ -36,7 +36,7 @@ export function Testimonials() {
           {/* Title */}
           <h2 className="mb-4 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Mamães que{" "}
-            <span className="text-green-600">amaram</span>
+            <span className="text-orange-600">amaram</span>
           </h2>
 
           {/* Subtitle */}
@@ -52,7 +52,7 @@ export function Testimonials() {
                 className="rounded-lg bg-card p-6 shadow-sm border border-border"
               >
                 {/* Quote Icon */}
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-green-600">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-orange-600">
                   <Quote className="h-5 w-5 text-white" />
                 </div>
 
@@ -75,12 +75,12 @@ export function Testimonials() {
                 </p>
 
                 {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600 text-white">
-                    <span className="text-sm font-semibold">
-                      {testimonial.initial}
-                    </span>
-                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-600 text-white">
+                      <span className="text-sm font-semibold">
+                        {testimonial.initial}
+                      </span>
+                    </div>
                   <div>
                     <p className="font-semibold text-foreground">
                       {testimonial.author}

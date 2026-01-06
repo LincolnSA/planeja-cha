@@ -17,7 +17,7 @@ export function SettingsHeader({ eventName, onViewInvite }: SettingsHeaderProps)
       <Button
         onClick={onViewInvite}
         variant="outline"
-        className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+        className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
       >
         Ver convite
       </Button>

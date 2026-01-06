@@ -33,8 +33,8 @@ export function Features() {
                 key={index}
                 className="rounded-lg bg-card p-6 shadow-sm border border-border"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                  <Icon className="h-6 w-6 text-green-600" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
+                  <Icon className="h-6 w-6 text-orange-600" />
                 </div>
                 <h3 className="mb-2 text-xl font-semibold text-foreground">
                   {feature.title}

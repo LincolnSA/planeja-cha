@@ -94,7 +94,7 @@ export default function DashboardPage() {
           icon={Users}
           value={confirmedGuests}
           label="Confirmados"
-          variant="green"
+          variant="orange"
         />
         <MetricCard
           icon={Gift}
@@ -105,7 +105,7 @@ export default function DashboardPage() {
           icon={Gift}
           value={chosenGifts}
           label="Presentes Escolhidos"
-          variant="green"
+          variant="orange"
         />
       </div>
 

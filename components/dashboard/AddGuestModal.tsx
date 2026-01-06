@@ -243,7 +243,7 @@ export function AddGuestModal({
                   type="button"
                   variant="outline"
                   onClick={handleAddCompanion}
-                  className="w-full border-green-600 text-green-600 hover:bg-green-50"
+                  className="w-full border-orange-600 text-orange-600 hover:bg-orange-50"
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Adicionar acompanhante
@@ -261,7 +261,7 @@ export function AddGuestModal({
               </Button>
               <Button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-orange-600 hover:bg-orange-700 text-white"
               >
                 {isEditMode ? "Salvar" : "Adicionar"}
               </Button>

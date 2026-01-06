@@ -8,7 +8,7 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row mb-5">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-green-600">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-orange-600">
               <Clock className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-semibold">Planeja Chá</span>

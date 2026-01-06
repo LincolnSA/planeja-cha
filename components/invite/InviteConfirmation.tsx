@@ -14,8 +14,8 @@ export function InviteConfirmation({ guestName }: InviteConfirmationProps) {
   return (
     <div className="flex flex-col items-center space-y-4 sm:space-y-6 py-6 sm:py-8 px-2">
       {/* Icon */}
-      <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-green-100 shrink-0">
-        <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 fill-green-600" />
+      <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-orange-100 shrink-0">
+        <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 fill-orange-600" />
       </div>
 
       {/* Thank You Message */}

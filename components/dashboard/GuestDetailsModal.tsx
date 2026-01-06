@@ -69,7 +69,7 @@ export function GuestDetailsModal({
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <User className="h-5 w-5 text-green-600" />
+                <User className="h-5 w-5 text-orange-600" />
                 <CardTitle>Informações Básicas</CardTitle>
               </div>
             </CardHeader>
@@ -97,7 +97,7 @@ export function GuestDetailsModal({
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-green-600" />
+                <Users className="h-5 w-5 text-orange-600" />
                 <CardTitle>
                   Acompanhantes ({guest.companions.length})
                 </CardTitle>
@@ -129,7 +129,7 @@ export function GuestDetailsModal({
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Gift className="h-5 w-5 text-green-600" />
+                <Gift className="h-5 w-5 text-orange-600" />
                 <CardTitle>
                   Presentes Escolhidos ({guest.giftSelections.length + guest.customGifts.length})
                 </CardTitle>

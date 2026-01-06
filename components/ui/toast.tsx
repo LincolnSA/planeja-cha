@@ -45,7 +45,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             className={cn(
               "flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg min-w-[300px] max-w-[400px] animate-in slide-in-from-bottom-5",
               toast.type === "success" &&
-                "bg-green-50 border-green-200 text-green-800",
+                "bg-orange-50 border-orange-200 text-orange-800",
               toast.type === "error" &&
                 "bg-red-50 border-red-200 text-red-800",
               toast.type === "info" &&
@@ -53,7 +53,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             )}
           >
             {toast.type === "success" && (
-              <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+              <CheckCircle2 className="h-5 w-5 text-orange-600 shrink-0" />
             )}
             {toast.type === "error" && (
               <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />

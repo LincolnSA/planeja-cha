@@ -83,8 +83,8 @@ export function InviteStep3({
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col items-center gap-4">
-        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-green-100 shrink-0">
-          <Gift className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
+        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-orange-100 shrink-0">
+          <Gift className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
         </div>
         <h2 className="text-center text-xl sm:text-2xl font-bold text-foreground">
           Escolha os Presentes
@@ -110,10 +110,10 @@ export function InviteStep3({
                   className={cn(
                     "flex items-start gap-2 sm:gap-3 md:gap-4 rounded-lg border p-3 sm:p-4 transition-colors",
                     isSelected
-                      ? "border-green-600 bg-green-50"
+                      ? "border-orange-600 bg-orange-50"
                       : "border-border",
                     isAvailable
-                      ? "cursor-pointer hover:border-green-300"
+                      ? "cursor-pointer hover:border-orange-300"
                       : "opacity-60 cursor-not-allowed"
                   )}
                 >
@@ -166,9 +166,9 @@ export function InviteStep3({
             <div
               onClick={handleCustomToggle}
               className={cn(
-                "flex items-start gap-2 sm:gap-3 md:gap-4 rounded-lg border p-3 sm:p-4 transition-colors cursor-pointer hover:border-green-300",
+                "flex items-start gap-2 sm:gap-3 md:gap-4 rounded-lg border p-3 sm:p-4 transition-colors cursor-pointer hover:border-orange-300",
                 isCustomSelected
-                  ? "border-green-600 bg-green-50"
+                  ? "border-orange-600 bg-orange-50"
                   : "border-border"
               )}
             >
@@ -221,14 +221,14 @@ export function InviteStep3({
             type="button"
             variant="outline"
             onClick={onBack}
-            className="flex-1 border-green-600 text-green-600 hover:bg-green-50 text-sm sm:text-base"
+            className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 text-sm sm:text-base"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
           <Button
             onClick={handleConfirm}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
+            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm sm:text-base"
           >
             <span className="hidden sm:inline">Confirmar presença</span>
             <span className="sm:hidden">Confirmar</span>
