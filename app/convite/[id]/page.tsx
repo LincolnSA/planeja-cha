@@ -212,7 +212,7 @@ export default function InvitePage() {
                     Confirmações Encerradas
                   </h2>
                   <p className="text-muted-foreground max-w-md">
-                    As confirmações para este chá de bebê foram encerradas. 
+                    As confirmações para este chá de bebê foram encerradas.
                     Entre em contato com os organizadores para mais informações.
                   </p>
                 </div>
@@ -370,7 +370,7 @@ function InviteStep1Wrapper({
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 shrink-0">
                 <Heart className="h-5 w-5 text-orange-600" />
               </div>
-              <p className="text-sm sm:text-base text-foreground leading-relaxed px-2">
+              <p className="text-sm sm:text-base text-foreground leading-relaxed px-2 whitespace-pre-line text-left">
                 {settings.customMessage}
               </p>
             </div>

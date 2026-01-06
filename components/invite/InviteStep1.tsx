@@ -54,7 +54,7 @@ export function InviteStep1({ onNext, currentStep = 1 }: InviteStep1Props) {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 shrink-0">
                 <Heart className="h-5 w-5 text-orange-600" />
               </div>
-              <p className="text-sm sm:text-base text-foreground leading-relaxed px-2">
+              <p className="text-sm sm:text-base text-foreground leading-relaxed px-2 whitespace-pre-line text-left">
                 {settings.customMessage}
               </p>
             </div>
