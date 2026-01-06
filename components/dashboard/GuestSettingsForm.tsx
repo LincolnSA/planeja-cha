@@ -20,7 +20,7 @@ import { useEvent } from "@/contexts/EventContext";
 import { useToast } from "@/components/ui/toast";
 
 const guestSettingsSchema = z.object({
-  maxCompanionsPerGuest: z.coerce
+  maxCompanionsPerGuest: z
     .number()
     .min(1, "A quantidade mínima é 1")
     .max(100, "A quantidade máxima é 100"),
@@ -33,7 +33,8 @@ export function GuestSettingsForm() {
   const { showToast } = useToast();
 
   const form = useForm<GuestSettingsFormValues>({
-    resolver: zodResolver(guestSettingsSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(guestSettingsSchema) as any,
     defaultValues: {
       maxCompanionsPerGuest: settings.maxCompanionsPerGuest,
     },
@@ -83,6 +84,8 @@ export function GuestSettingsForm() {
                       max="100"
                       placeholder="Ex: 5"
                       {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value}
                     />
                   </FormControl>
                   <FormDescription>

@@ -11,7 +11,7 @@ export async function getCurrentUserId(): Promise<string | null> {
     }
 
     // NextAuth v5 com callback deve retornar o ID diretamente
-    const userId = (session.user as any).id;
+    const userId = (session.user as { id?: string }).id;
 
     if (userId) {
       return userId;

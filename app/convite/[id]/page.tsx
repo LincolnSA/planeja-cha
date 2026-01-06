@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,10 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Calendar, Clock, MapPin, Heart, Baby, CheckCircle2, Users, Plus, ArrowLeft, ArrowRight, X } from "lucide-react";
-import { InviteStep1 } from "@/components/invite/InviteStep1";
-import { InviteStep2 } from "@/components/invite/InviteStep2";
 import { InviteStep3 } from "@/components/invite/InviteStep3";
-import { InviteConfirmation } from "@/components/invite/InviteConfirmation";
 import { InviteStepper } from "@/components/invite/InviteStepper";
 import { getTeaPublic } from "@/actions/tea/get-tea-public";
 import { getGiftsPublic } from "@/actions/gift";
@@ -447,6 +444,7 @@ function InviteStep2Wrapper({
   >;
 
   const form = useForm<ConfirmationFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(createConfirmationSchema(MAX_COMPANIONS)) as any,
     defaultValues: {
       fullName: "",
@@ -459,8 +457,14 @@ function InviteStep2Wrapper({
     name: "companions",
   });
 
-  const validCompanionsCount = fields.filter(
-    (_, index) => form.watch(`companions.${index}.name`)?.trim()
+  const watchedCompanions = useWatch({
+    control: form.control,
+    name: "companions",
+    defaultValue: [],
+  });
+
+  const validCompanionsCount = (watchedCompanions || []).filter(
+    (companion) => companion?.name?.trim()
   ).length;
 
   const handleAddCompanion = () => {

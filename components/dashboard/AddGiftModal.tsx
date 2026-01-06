@@ -43,7 +43,7 @@ interface AddGiftModalProps {
 const giftFormSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
   description: z.string().min(1, "Descrição é obrigatória"),
-  quantity: z.coerce.number().min(1, "Quantidade deve ser maior que 0"),
+  quantity: z.number().min(1, "Quantidade deve ser maior que 0"),
 });
 
 type GiftFormValues = z.infer<typeof giftFormSchema>;
@@ -58,7 +58,8 @@ export function AddGiftModal({
   const isEditMode = !!giftToEdit;
 
   const form = useForm<GiftFormValues>({
-    resolver: zodResolver(giftFormSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(giftFormSchema) as any,
     defaultValues: {
       title: "",
       description: "",
@@ -175,6 +176,8 @@ export function AddGiftModal({
                       min="1"
                       placeholder="Ex: 3"
                       {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value}
                     />
                   </FormControl>
                   <FormMessage />

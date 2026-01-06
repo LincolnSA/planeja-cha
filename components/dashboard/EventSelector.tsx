@@ -86,6 +86,7 @@ export function EventSelector() {
     const result = await createEvent({
       ...values,
       customMessage: values.customMessage || "",
+      isActive: true,
     });
     
     if (result) {

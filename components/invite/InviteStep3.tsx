@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Heart, Gift } from "lucide-react";
+import { ArrowLeft, Heart, Gift as GiftIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Gift } from "@/actions/gift";
 
@@ -84,7 +84,7 @@ export function InviteStep3({
       {/* Header */}
       <div className="flex flex-col items-center gap-4">
         <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-orange-100 shrink-0">
-          <Gift className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
+          <GiftIcon className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
         </div>
         <h2 className="text-center text-xl sm:text-2xl font-bold text-foreground">
           Escolha os Presentes

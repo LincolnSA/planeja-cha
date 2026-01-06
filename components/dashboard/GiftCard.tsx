@@ -4,14 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-
-interface Gift {
-  id: string;
-  title: string;
-  description: string;
-  quantity: number;
-  chosen: number;
-}
+import type { Gift } from "@/actions/gift";
 
 interface GiftCardProps {
   gift: Gift;

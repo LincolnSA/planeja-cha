@@ -5,14 +5,12 @@ import { Calendar, Clock, Users, MapPin } from "lucide-react";
 import { useEvent } from "@/contexts/EventContext";
 
 interface EventInfoProps {
-  confirmedGuests: number;
   totalGuests: number;
   totalCompanions?: number;
   totalPeople?: number;
 }
 
 export function EventInfo({
-  confirmedGuests,
   totalGuests,
   totalCompanions = 0,
   totalPeople,

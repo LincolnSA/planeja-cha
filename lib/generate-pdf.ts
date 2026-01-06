@@ -21,9 +21,9 @@ export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
     const sectionSpacing = 10;
 
     // Cores
-    const primaryColor = [234, 88, 12]; // Terra cota (Orange-600) #ea580c
-    const textColor = [0, 0, 0];
-    const grayColor = [107, 114, 128];
+    const primaryColor: [number, number, number] = [234, 88, 12]; // Terra cota (Orange-600) #ea580c
+    const textColor: [number, number, number] = [0, 0, 0];
+    const grayColor: [number, number, number] = [107, 114, 128];
 
     // Título principal
     doc.setFontSize(24);

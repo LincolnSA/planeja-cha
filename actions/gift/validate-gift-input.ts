@@ -33,7 +33,7 @@ export function validateGiftInput(input: unknown): CreateGiftInput {
   const result = createGiftSchema.safeParse(input);
 
   if (!result.success) {
-    const firstError = result.error.errors[0];
+    const firstError = result.error.issues[0];
     throw new Error(
       firstError?.message || "Erro de validação nos dados fornecidos"
     );

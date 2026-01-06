@@ -10,6 +10,7 @@ export interface CreateTeaResultSuccess {
     customMessage: string;
     maxCompanionsPerGuest: number;
     inviteLink: string;
+    isActive: boolean;
     userId: string;
     createdAt: Date;
     updatedAt: Date;

@@ -1,12 +1,8 @@
 interface GuestsSummaryProps {
-  confirmed: number;
-  total: number;
   totalPeople: number;
 }
 
 export function GuestsSummary({
-  confirmed,
-  total,
   totalPeople,
 }: GuestsSummaryProps) {
   return (

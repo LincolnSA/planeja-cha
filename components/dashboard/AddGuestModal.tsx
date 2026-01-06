@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -75,7 +75,8 @@ export function AddGuestModal({
   type GuestFormValues = z.infer<ReturnType<typeof createGuestFormSchema>>;
 
   const form = useForm<GuestFormValues>({
-    resolver: zodResolver(createGuestFormSchema(MAX_COMPANIONS)),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(createGuestFormSchema(MAX_COMPANIONS)) as any,
     defaultValues: {
       name: "",
       companions: [],
@@ -85,6 +86,12 @@ export function AddGuestModal({
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "companions",
+  });
+
+  const watchedCompanions = useWatch({
+    control: form.control,
+    name: "companions",
+    defaultValue: [],
   });
 
   // Preencher formulário quando estiver editando ou limpar quando fechar
@@ -98,8 +105,8 @@ export function AddGuestModal({
           companions: companionsData.length > 0
             ? companionsData.map((c) => ({ name: c.name || "" }))
             : Array.from({ length: guestToEdit.companionsTotal }, () => ({
-              name: "",
-            })),
+                name: "",
+              })),
         });
       } else {
         // Modo de adição: limpar formulário
@@ -111,8 +118,8 @@ export function AddGuestModal({
     }
   }, [guestToEdit, open, form]);
 
-  const validCompanionsCount = fields.filter(
-    (_, index) => form.watch(`companions.${index}.name`)?.trim()
+  const validCompanionsCount = (watchedCompanions || []).filter(
+    (companion) => companion?.name?.trim()
   ).length;
 
   const handleAddCompanion = () => {

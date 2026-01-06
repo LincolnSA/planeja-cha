@@ -30,6 +30,7 @@ export function InviteModal({
   const [guestName, setGuestName] = useState<string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [gifts, setGifts] = useState<Gift[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoadingGifts, setIsLoadingGifts] = useState(false);
 
   const handleNext = (name?: string) => {

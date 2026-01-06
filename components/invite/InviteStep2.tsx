@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,7 +46,8 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
   >;
 
   const form = useForm<ConfirmationFormValues>({
-    resolver: zodResolver(createConfirmationSchema(MAX_COMPANIONS)),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(createConfirmationSchema(MAX_COMPANIONS)) as any,
     defaultValues: {
       fullName: "",
       companions: [],
@@ -59,8 +59,14 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
     name: "companions",
   });
 
-  const validCompanionsCount = fields.filter(
-    (_, index) => form.watch(`companions.${index}.name`)?.trim()
+  const watchedCompanions = useWatch({
+    control: form.control,
+    name: "companions",
+    defaultValue: [],
+  });
+
+  const validCompanionsCount = (watchedCompanions || []).filter(
+    (companion) => companion?.name?.trim()
   ).length;
 
   const handleAddCompanion = () => {

@@ -54,7 +54,16 @@ export async function updateTea(
   }
 
   // Prepara os dados para atualização
-  const updateData: any = {};
+  const updateData: {
+    name?: string;
+    parentsName?: string;
+    location?: string;
+    customMessage?: string;
+    maxCompanionsPerGuest?: number;
+    isActive?: boolean;
+    date?: string;
+    time?: Date;
+  } = {};
 
   if (input.name !== undefined) updateData.name = input.name;
   if (input.parentsName !== undefined) updateData.parentsName = input.parentsName;

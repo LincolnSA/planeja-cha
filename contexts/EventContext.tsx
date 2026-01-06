@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { getTeas, createTea, updateTea, deleteTea } from "@/actions/tea";
 import type { CreateTeaInput } from "@/actions/tea/validate-tea-input";
+import { normalizeDateTime } from "@/actions/tea/normalize-datetime";
 
 export interface EventSettings {
   id: string;
@@ -87,6 +88,7 @@ function mapTeaToEventSettings(tea: {
 export function EventProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<EventSettings[]>([]);
   const [currentEventId, setCurrentEventId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true);
 
   // Carrega eventos do banco na inicialização
@@ -114,7 +116,6 @@ export function EventProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     loadEvents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const currentEvent = events.find((e) => e.id === currentEventId) || null;
@@ -187,12 +188,39 @@ export function EventProvider({ children }: { children: ReactNode }) {
         return ddmmyyyy;
       };
 
-      const updateData: any = {};
+      const updateData: {
+        name?: string;
+        parentsName?: string;
+        date?: string;
+        time?: Date;
+        location?: string;
+        customMessage?: string;
+        maxCompanionsPerGuest?: number;
+        isActive?: boolean;
+      } = {};
       
       if (settings.eventName !== undefined) updateData.name = settings.eventName;
       if (settings.parentsName !== undefined) updateData.parentsName = settings.parentsName;
       if (settings.date !== undefined) updateData.date = convertToYYYYMMDD(settings.date);
-      if (settings.time !== undefined) updateData.time = settings.time;
+      if (settings.time !== undefined) {
+        // Se date ou time foram fornecidos, normaliza o time
+        const date = settings.date ? convertToYYYYMMDD(settings.date) : undefined;
+        const time = settings.time;
+        if (date) {
+          updateData.time = normalizeDateTime(date, time);
+        } else {
+          // Se não há date, usa a data atual do evento
+          const currentEvent = events.find(e => e.id === eventId);
+          if (currentEvent) {
+            const currentDate = convertToYYYYMMDD(currentEvent.date);
+            updateData.time = normalizeDateTime(currentDate, time);
+          } else {
+            // Se não há evento atual, usa a data de hoje
+            const today = new Date().toISOString().split('T')[0];
+            updateData.time = normalizeDateTime(today, time);
+          }
+        }
+      }
       if (settings.location !== undefined) updateData.location = settings.location;
       if (settings.customMessage !== undefined) updateData.customMessage = settings.customMessage;
       if (settings.maxCompanionsPerGuest !== undefined) {

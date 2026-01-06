@@ -24,7 +24,6 @@ export default function GuestsPage() {
 
   // Obter o evento atual (pode ser null)
   const currentEvent = eventContext?.currentEvent;
-  const eventName = currentEvent?.eventName;
 
   // Carregar convidados do banco
   const loadGuests = async () => {
@@ -105,13 +104,11 @@ export default function GuestsPage() {
   return (
     <div className="space-y-6">
       <GuestsHeader
-        eventName={eventName}
+        eventName={currentEvent.eventName}
         onViewInvite={() => setIsInviteModalOpen(true)}
       />
 
       <GuestsSummary
-        confirmed={confirmedCount}
-        total={totalGuests}
         totalPeople={totalPeople}
       />
 

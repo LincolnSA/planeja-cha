@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Gift, Copy, FileDown } from "lucide-react";
+import { Gift, Copy, FileDown } from "lucide-react";
 import { EventContext } from "@/contexts/EventContext";
 import { useToast } from "@/components/ui/toast";
 import { getTeaCompleteData } from "@/actions/tea/get-tea-complete-data";

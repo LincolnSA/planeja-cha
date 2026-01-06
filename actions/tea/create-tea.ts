@@ -115,6 +115,7 @@ export async function createTea(
         customMessage: tea.customMessage,
         maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
         inviteLink: tea.inviteLink,
+        isActive: tea.isActive,
         userId: tea.userId,
         createdAt: tea.createdAt,
         updatedAt: tea.updatedAt,

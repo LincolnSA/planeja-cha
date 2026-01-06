@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "./Sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -9,11 +9,17 @@ import { usePathname } from "next/navigation";
 export function MobileSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const prevPathnameRef = useRef(pathname);
 
   // Fechar o menu quando a rota mudar
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    if (prevPathnameRef.current !== pathname && isOpen) {
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      setIsOpen(false);
+    }
+    prevPathnameRef.current = pathname;
+  }, [pathname, isOpen]);
 
   return (
     <>

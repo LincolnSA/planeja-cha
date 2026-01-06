@@ -1,14 +1,7 @@
 "use client";
 
 import { GiftCard } from "./GiftCard";
-
-interface Gift {
-  id: string;
-  title: string;
-  description: string;
-  quantity: number;
-  chosen: number;
-}
+import type { Gift } from "@/actions/gift";
 
 interface GiftsGridProps {
   gifts: Gift[];

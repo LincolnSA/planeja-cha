@@ -113,7 +113,6 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <QuickActions />
         <EventInfo
-          confirmedGuests={confirmedGuests}
           totalGuests={totalGuests}
           totalCompanions={totalCompanions}
           totalPeople={totalPeople}

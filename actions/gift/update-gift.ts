@@ -43,7 +43,7 @@ export async function updateGift(
   // Validar input
   const validationResult = updateGiftSchema.safeParse(input);
   if (!validationResult.success) {
-    const firstError = validationResult.error.errors[0];
+    const firstError = validationResult.error.issues[0];
     throw new Error(
       firstError?.message || "Erro de validação nos dados fornecidos"
     );
