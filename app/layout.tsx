@@ -24,6 +24,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Planeja Chá - Organize seu Chá de Bebê com carinho e praticidade",
   description: "Crie convites personalizados, gerencie sua lista de presentes e confirme a presença dos convidados — tudo em um só lugar.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 interface Props {
