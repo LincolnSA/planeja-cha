@@ -23,14 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-interface Gift {
-  id: string;
-  title: string;
-  description: string;
-  quantity: number;
-  chosen: number;
-}
+import type { Gift } from "@/actions/gift";
 
 interface AddGiftModalProps {
   open: boolean;
@@ -56,6 +49,7 @@ export function AddGiftModal({
   giftToEdit,
 }: AddGiftModalProps) {
   const isEditMode = !!giftToEdit;
+  const isChosen = giftToEdit?.chosen && giftToEdit.chosen > 0;
 
   const form = useForm<GiftFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,12 +82,22 @@ export function AddGiftModal({
 
   const onSubmit = (values: GiftFormValues) => {
     if (isEditMode && giftToEdit && onEdit) {
-      onEdit(
-        giftToEdit.id,
-        values.title.trim(),
-        values.description.trim(),
-        values.quantity
-      );
+      // Se o presente já foi escolhido, usar os valores originais de título e descrição
+      if (isChosen) {
+        onEdit(
+          giftToEdit.id,
+          giftToEdit.title,
+          giftToEdit.description,
+          values.quantity
+        );
+      } else {
+        onEdit(
+          giftToEdit.id,
+          values.title.trim(),
+          values.description.trim(),
+          values.quantity
+        );
+      }
     } else {
       onAdd(
         values.title.trim(),
@@ -119,7 +123,9 @@ export function AddGiftModal({
           </DialogTitle>
           <DialogDescription>
             {isEditMode
-              ? "Edite os dados do presente."
+              ? isChosen
+                ? "Este presente já foi escolhido. Você pode editar apenas a quantidade."
+                : "Edite os dados do presente."
               : "Preencha os dados do presente para adicioná-lo à lista."}
           </DialogDescription>
         </DialogHeader>
@@ -137,6 +143,8 @@ export function AddGiftModal({
                     <Input
                       placeholder="Ex: Kit Banho Bebê"
                       {...field}
+                      disabled={!!isChosen}
+                      className={isChosen ? "bg-muted cursor-not-allowed" : ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -154,8 +162,9 @@ export function AddGiftModal({
                   <FormControl>
                     <Textarea
                       placeholder="Ex: Toalha, sabonete e shampoo"
-                      className="min-h-[100px]"
+                      className={`min-h-[100px] ${isChosen ? "bg-muted cursor-not-allowed" : ""}`}
                       {...field}
+                      disabled={!!isChosen}
                     />
                   </FormControl>
                   <FormMessage />
