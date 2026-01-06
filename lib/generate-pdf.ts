@@ -11,7 +11,6 @@ export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
   try {
     // Tentar importar jsPDF dinamicamente
     const { jsPDF } = await import("jspdf");
-    
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -54,6 +53,7 @@ export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
     doc.text(`Local: ${data.location}`, margin, yPosition);
     yPosition += sectionSpacing;
 
+    /*
     if (data.customMessage) {
       doc.setFontSize(10);
       doc.setTextColor(...grayColor);
@@ -61,6 +61,7 @@ export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
       doc.text(splitMessage, margin, yPosition);
       yPosition += lineHeight * splitMessage.length + sectionSpacing;
     }
+    */
 
     // Verificar se precisa de nova página
     if (yPosition > pageHeight - 40) {
@@ -102,7 +103,6 @@ export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
         doc.setTextColor(...grayColor);
         doc.text("   Acompanhantes:", margin, yPosition);
         yPosition += lineHeight;
-        
         guest.companions.forEach((companion) => {
           doc.text(`   - ${companion.name}`, margin + 5, yPosition);
           yPosition += lineHeight;
@@ -113,7 +113,6 @@ export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
         doc.setTextColor(...grayColor);
         doc.text("   Presentes:", margin, yPosition);
         yPosition += lineHeight;
-        
         guest.giftSelections.forEach((selection) => {
           doc.text(`   - ${selection.gift.title}`, margin + 5, yPosition);
           yPosition += lineHeight;
