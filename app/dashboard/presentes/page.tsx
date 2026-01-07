@@ -8,6 +8,7 @@ import { AddGiftModal } from "@/components/dashboard/AddGiftModal";
 import { DeleteGiftModal } from "@/components/dashboard/DeleteGiftModal";
 import { InviteModal } from "@/components/dashboard/InviteModal";
 import { WelcomeScreen } from "@/components/dashboard/WelcomeScreen";
+import { GiftsInfoMessageForm } from "@/components/dashboard/GiftsInfoMessageForm";
 import { EventContext } from "@/contexts/EventContext";
 import { useContext, useState, useEffect } from "react";
 import { getGifts, getCustomGifts, createGift, updateGift, deleteGift } from "@/actions/gift";
@@ -194,6 +195,8 @@ export default function GiftsPage() {
         eventName={eventName}
         onViewInvite={() => setIsInviteModalOpen(true)}
       />
+
+      <GiftsInfoMessageForm />
 
       <GiftsSummary
         chosen={chosenGifts}

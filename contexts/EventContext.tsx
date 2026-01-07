@@ -13,6 +13,7 @@ export interface EventSettings {
   time: string;
   location: string;
   customMessage: string;
+  giftsInfoMessage: string | null;
   maxCompanionsPerGuest: number;
   inviteLink: string;
   isActive: boolean;
@@ -45,6 +46,7 @@ function mapTeaToEventSettings(tea: {
   time: Date;
   location: string;
   customMessage: string;
+  giftsInfoMessage: string | null;
   maxCompanionsPerGuest: number;
   inviteLink: string;
   isActive: boolean;
@@ -80,6 +82,7 @@ function mapTeaToEventSettings(tea: {
     time: timeString,
     location: tea.location,
     customMessage: tea.customMessage,
+    giftsInfoMessage: tea.giftsInfoMessage,
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
     inviteLink: tea.inviteLink,
     isActive: tea.isActive,
@@ -198,6 +201,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
         time?: Date;
         location?: string;
         customMessage?: string;
+        giftsInfoMessage?: string | null;
         maxCompanionsPerGuest?: number;
         isActive?: boolean;
         requireGiftSelection?: boolean;
@@ -227,6 +231,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
       }
       if (settings.location !== undefined) updateData.location = settings.location;
       if (settings.customMessage !== undefined) updateData.customMessage = settings.customMessage;
+      if (settings.giftsInfoMessage !== undefined) updateData.giftsInfoMessage = settings.giftsInfoMessage;
       if (settings.maxCompanionsPerGuest !== undefined) {
         updateData.maxCompanionsPerGuest = settings.maxCompanionsPerGuest;
       }

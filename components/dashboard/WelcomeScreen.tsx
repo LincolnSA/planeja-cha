@@ -84,6 +84,7 @@ export function WelcomeScreen() {
     const result = await createEvent({
       ...values,
       customMessage: values.customMessage || "",
+      giftsInfoMessage: null,
       isActive: true,
       requireGiftSelection: false,
     });

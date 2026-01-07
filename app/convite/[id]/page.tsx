@@ -328,6 +328,7 @@ export default function InvitePage() {
                     onBack={handleBack}
                     onConfirm={handleSelectGifts}
                     requireGiftSelection={tea.requireGiftSelection}
+                    giftsInfoMessage={tea.giftsInfoMessage}
                     initialData={step3Data}
                     onDataChange={setStep3Data}
                   />

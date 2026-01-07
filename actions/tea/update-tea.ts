@@ -11,6 +11,7 @@ export interface UpdateTeaInput {
   time?: string | Date;
   location?: string;
   customMessage?: string;
+  giftsInfoMessage?: string | null;
   maxCompanionsPerGuest?: number;
   isActive?: boolean;
   requireGiftSelection?: boolean;
@@ -24,6 +25,7 @@ export interface Tea {
   time: Date;
   location: string;
   customMessage: string;
+  giftsInfoMessage: string | null;
   maxCompanionsPerGuest: number;
   inviteLink: string;
   isActive: boolean;
@@ -61,6 +63,7 @@ export async function updateTea(
     parentsName?: string;
     location?: string;
     customMessage?: string;
+    giftsInfoMessage?: string | null;
     maxCompanionsPerGuest?: number;
     isActive?: boolean;
     requireGiftSelection?: boolean;
@@ -72,6 +75,7 @@ export async function updateTea(
   if (input.parentsName !== undefined) updateData.parentsName = input.parentsName;
   if (input.location !== undefined) updateData.location = input.location;
   if (input.customMessage !== undefined) updateData.customMessage = input.customMessage;
+  if (input.giftsInfoMessage !== undefined) updateData.giftsInfoMessage = input.giftsInfoMessage;
   if (input.maxCompanionsPerGuest !== undefined) {
     updateData.maxCompanionsPerGuest = input.maxCompanionsPerGuest;
   }
@@ -101,6 +105,7 @@ export async function updateTea(
     time: updatedTea.time,
     location: updatedTea.location,
     customMessage: updatedTea.customMessage,
+    giftsInfoMessage: updatedTea.giftsInfoMessage,
     maxCompanionsPerGuest: updatedTea.maxCompanionsPerGuest,
     inviteLink: updatedTea.inviteLink,
     isActive: updatedTea.isActive,

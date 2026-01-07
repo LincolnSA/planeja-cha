@@ -10,6 +10,7 @@ export interface PublicTea {
   time: string; // Formato HH:MM para evitar problemas de hidratação
   location: string;
   customMessage: string;
+  giftsInfoMessage: string | null;
   maxCompanionsPerGuest: number;
   isActive: boolean;
   requireGiftSelection: boolean;
@@ -71,6 +72,7 @@ export async function getTeaPublic(teaId: string): Promise<PublicTea | null> {
     time: formatTime(tea.time),
     location: tea.location,
     customMessage: tea.customMessage,
+    giftsInfoMessage: tea.giftsInfoMessage,
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
     isActive: tea.isActive,
     requireGiftSelection: tea.requireGiftSelection,

@@ -113,6 +113,7 @@ export async function createTea(
         time: tea.time,
         location: tea.location,
         customMessage: tea.customMessage,
+        giftsInfoMessage: tea.giftsInfoMessage,
         maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
         inviteLink: tea.inviteLink,
         isActive: tea.isActive,

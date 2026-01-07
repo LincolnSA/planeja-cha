@@ -149,6 +149,7 @@ model Tea {
   time                  DateTime
   location              String
   customMessage         String   @map("custom_message")
+  giftsInfoMessage      String?  @map("gifts_info_message")
   maxCompanionsPerGuest Int      @map("max_companions_per_guest")
   inviteLink            String   @map("invite_link")
   isActive              Boolean  @default(true) @map("is_active")

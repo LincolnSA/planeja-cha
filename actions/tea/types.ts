@@ -8,6 +8,7 @@ export interface CreateTeaResultSuccess {
     time: Date;
     location: string;
     customMessage: string;
+    giftsInfoMessage: string | null;
     maxCompanionsPerGuest: number;
     inviteLink: string;
     isActive: boolean;

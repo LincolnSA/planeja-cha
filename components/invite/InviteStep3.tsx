@@ -22,6 +22,7 @@ interface InviteStep3Props {
   onBack: () => void;
   onConfirm: (selectedGifts: SelectedGift[]) => void;
   requireGiftSelection?: boolean;
+  giftsInfoMessage?: string | null;
   initialData?: {
     selectedGiftIds?: string[];
     customGift?: string;
@@ -39,6 +40,7 @@ export function InviteStep3({
   onBack,
   onConfirm,
   requireGiftSelection = false,
+  giftsInfoMessage,
   initialData,
   onDataChange,
 }: InviteStep3Props) {
@@ -202,6 +204,13 @@ export function InviteStep3({
       <Card className="shadow-md">
         <CardContent className="p-3 sm:p-4 md:p-6">
           <div className="space-y-3 sm:space-y-4">
+            {giftsInfoMessage && (
+              <div className="mb-4 p-3 sm:p-4 rounded-lg bg-orange-50 border border-orange-200">
+                <p className="text-sm sm:text-base text-foreground whitespace-pre-wrap">
+                  {giftsInfoMessage}
+                </p>
+              </div>
+            )}
             {gifts.map((gift) => {
               const status = getGiftStatus(gift);
               const remaining = gift.quantity - gift.chosen;

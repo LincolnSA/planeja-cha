@@ -189,6 +189,7 @@ export function InviteModal({
                     onBack={handleBack}
                     onConfirm={handleConfirmPresence}
                     requireGiftSelection={currentEvent?.requireGiftSelection}
+                    giftsInfoMessage={currentEvent?.giftsInfoMessage}
                     initialData={step3Data}
                     onDataChange={setStep3Data}
                   />
