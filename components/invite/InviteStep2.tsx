@@ -102,7 +102,7 @@ export function InviteStep2({ onNext, onBack, initialData, onDataChange }: Invit
       if (onDataChange && formValues && !isSyncingRef.current) {
         const companionsList = (formValues.companions || [])
           .map((c) => c.name)
-          .filter((name) => name?.trim());
+          .filter((name): name is string => Boolean(name?.trim()));
         
         const newData = {
           fullName: formValues.fullName || "",
