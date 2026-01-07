@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,6 +22,16 @@ interface InviteStep3Props {
   onBack: () => void;
   onConfirm: (selectedGifts: SelectedGift[]) => void;
   requireGiftSelection?: boolean;
+  initialData?: {
+    selectedGiftIds?: string[];
+    customGift?: string;
+    isCustomSelected?: boolean;
+  };
+  onDataChange?: (data: {
+    selectedGiftIds: string[];
+    customGift: string;
+    isCustomSelected: boolean;
+  }) => void;
 }
 
 export function InviteStep3({
@@ -29,11 +39,96 @@ export function InviteStep3({
   onBack,
   onConfirm,
   requireGiftSelection = false,
+  initialData,
+  onDataChange,
 }: InviteStep3Props) {
   const { showToast } = useToast();
-  const [selectedGifts, setSelectedGifts] = useState<Set<string>>(new Set());
-  const [customGift, setCustomGift] = useState<string>("");
-  const [isCustomSelected, setIsCustomSelected] = useState(false);
+  const isSyncingRef = useRef(false);
+  const lastSyncedDataRef = useRef<{
+    selectedGiftIds: string[];
+    customGift: string;
+    isCustomSelected: boolean;
+  } | null>(null);
+
+  const [selectedGifts, setSelectedGifts] = useState<Set<string>>(
+    new Set(initialData?.selectedGiftIds || [])
+  );
+  const [customGift, setCustomGift] = useState<string>(
+    initialData?.customGift || ""
+  );
+  const [isCustomSelected, setIsCustomSelected] = useState(
+    initialData?.isCustomSelected || false
+  );
+
+  // Atualizar o estado quando initialData mudar (apenas se for diferente)
+  useEffect(() => {
+    if (initialData && !isSyncingRef.current) {
+      const currentSelectedIds = Array.from(selectedGifts).sort();
+      const newSelectedIds = (initialData.selectedGiftIds || []).sort();
+      const currentCustomGift = customGift;
+      const newCustomGift = initialData.customGift || "";
+      const currentIsCustomSelected = isCustomSelected;
+      const newIsCustomSelected = initialData.isCustomSelected || false;
+
+      // Só atualiza se os dados forem diferentes
+      if (
+        JSON.stringify(currentSelectedIds) !== JSON.stringify(newSelectedIds) ||
+        currentCustomGift !== newCustomGift ||
+        currentIsCustomSelected !== newIsCustomSelected
+      ) {
+        isSyncingRef.current = true;
+        setSelectedGifts(new Set(initialData.selectedGiftIds || []));
+        setCustomGift(initialData.customGift || "");
+        setIsCustomSelected(initialData.isCustomSelected || false);
+        // Atualizar a referência também para evitar notificação desnecessária
+        lastSyncedDataRef.current = {
+          selectedGiftIds: Array.from(new Set(initialData.selectedGiftIds || [])),
+          customGift: initialData.customGift || "",
+          isCustomSelected: initialData.isCustomSelected || false,
+        };
+        setTimeout(() => {
+          isSyncingRef.current = false;
+        }, 0);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData]);
+
+  // Notificar mudanças nos dados para o componente pai (apenas quando realmente mudar)
+  useEffect(() => {
+    // Aguardar um pouco para garantir que não estamos sincronizando
+    const timeoutId = setTimeout(() => {
+      if (onDataChange && !isSyncingRef.current) {
+        const newData = {
+          selectedGiftIds: Array.from(selectedGifts).sort(),
+          customGift,
+          isCustomSelected,
+        };
+
+        // Só notifica se os dados forem diferentes dos últimos sincronizados
+        const lastSynced = lastSyncedDataRef.current;
+        if (
+          !lastSynced ||
+          JSON.stringify(lastSynced.selectedGiftIds.sort()) !== JSON.stringify(newData.selectedGiftIds) ||
+          lastSynced.customGift !== newData.customGift ||
+          lastSynced.isCustomSelected !== newData.isCustomSelected
+        ) {
+          lastSyncedDataRef.current = {
+            selectedGiftIds: Array.from(selectedGifts),
+            customGift,
+            isCustomSelected,
+          };
+          onDataChange({
+            selectedGiftIds: Array.from(selectedGifts),
+            customGift,
+            isCustomSelected,
+          });
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [selectedGifts, customGift, isCustomSelected, onDataChange]);
 
   const getGiftStatus = (gift: Gift) => {
     const remaining = gift.quantity - gift.chosen;

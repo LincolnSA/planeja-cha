@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,8 +20,13 @@ import { useEvent } from "@/contexts/EventContext";
 import { CheckCircle2 } from "lucide-react";
 
 interface InviteStep2Props {
-  onNext: (guestName: string) => void;
+  onNext: (guestName: string, companions: string[]) => void;
   onBack: () => void;
+  initialData?: {
+    fullName?: string;
+    companions?: string[];
+  };
+  onDataChange?: (data: { fullName: string; companions: string[] }) => void;
 }
 
 const createConfirmationSchema = (maxCompanions: number) =>
@@ -37,7 +43,7 @@ const createConfirmationSchema = (maxCompanions: number) =>
       .default([]),
   });
 
-export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
+export function InviteStep2({ onNext, onBack, initialData, onDataChange }: InviteStep2Props) {
   const { settings } = useEvent();
   const MAX_COMPANIONS = settings.maxCompanionsPerGuest;
 
@@ -45,14 +51,79 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
     ReturnType<typeof createConfirmationSchema>
   >;
 
+  const isSyncingRef = useRef(false);
+  const lastSyncedDataRef = useRef<{ fullName: string; companions: string[] } | null>(null);
+
   const form = useForm<ConfirmationFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(createConfirmationSchema(MAX_COMPANIONS)) as any,
     defaultValues: {
-      fullName: "",
-      companions: [],
+      fullName: initialData?.fullName || "",
+      companions: initialData?.companions?.map(name => ({ name })) || [],
     },
   });
+
+  // Atualizar o form quando initialData mudar (apenas se for diferente)
+  useEffect(() => {
+    if (initialData && !isSyncingRef.current) {
+      const currentFullName = form.getValues("fullName");
+      const currentCompanions = form.getValues("companions").map(c => c.name).filter(n => n.trim());
+      const newFullName = initialData.fullName || "";
+      const newCompanions = (initialData.companions || []).filter(n => n.trim());
+
+      // Só atualiza se os dados forem diferentes
+      if (
+        currentFullName !== newFullName ||
+        JSON.stringify(currentCompanions.sort()) !== JSON.stringify(newCompanions.sort())
+      ) {
+        isSyncingRef.current = true;
+        form.reset({
+          fullName: newFullName,
+          companions: newCompanions.map(name => ({ name })),
+        });
+        // Atualizar a referência também para evitar notificação desnecessária
+        lastSyncedDataRef.current = {
+          fullName: newFullName,
+          companions: newCompanions,
+        };
+        setTimeout(() => {
+          isSyncingRef.current = false;
+        }, 0);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData]);
+
+  // Notificar mudanças nos dados para o componente pai (apenas quando realmente mudar)
+  const formValues = useWatch({ control: form.control });
+  useEffect(() => {
+    // Aguardar um pouco para garantir que não estamos sincronizando
+    const timeoutId = setTimeout(() => {
+      if (onDataChange && formValues && !isSyncingRef.current) {
+        const companionsList = (formValues.companions || [])
+          .map((c) => c.name)
+          .filter((name) => name?.trim());
+        
+        const newData = {
+          fullName: formValues.fullName || "",
+          companions: companionsList,
+        };
+
+        // Só notifica se os dados forem diferentes dos últimos sincronizados
+        const lastSynced = lastSyncedDataRef.current;
+        if (
+          !lastSynced ||
+          lastSynced.fullName !== newData.fullName ||
+          JSON.stringify(lastSynced.companions.sort()) !== JSON.stringify(newData.companions.sort())
+        ) {
+          lastSyncedDataRef.current = newData;
+          onDataChange(newData);
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [formValues, onDataChange]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -77,9 +148,10 @@ export function InviteStep2({ onNext, onBack }: InviteStep2Props) {
   };
 
   const onSubmit = (values: ConfirmationFormValues) => {
-    // Aqui você salvaria os dados da confirmação
-    console.log("Dados da confirmação:", values);
-    onNext(values.fullName);
+    const companionsList = values.companions
+      .map((c) => c.name)
+      .filter((name) => name.trim());
+    onNext(values.fullName, companionsList);
   };
 
   return (

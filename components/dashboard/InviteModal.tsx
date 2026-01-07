@@ -28,17 +28,51 @@ export function InviteModal({
   const { currentEvent } = useEvent();
   const [currentStep, setCurrentStep] = useState(1);
   const [guestName, setGuestName] = useState<string>("");
+  const [companions, setCompanions] = useState<string[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [gifts, setGifts] = useState<Gift[]>([]);
+  // Estado para preservar dados do step 2
+  const [step2Data, setStep2Data] = useState<{
+    fullName: string;
+    companions: string[];
+  }>({
+    fullName: "",
+    companions: [],
+  });
+  // Estado para preservar dados do step 3
+  const [step3Data, setStep3Data] = useState<{
+    selectedGiftIds: string[];
+    customGift: string;
+    isCustomSelected: boolean;
+  }>({
+    selectedGiftIds: [],
+    customGift: "",
+    isCustomSelected: false,
+  });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoadingGifts, setIsLoadingGifts] = useState(false);
 
-  const handleNext = (name?: string) => {
+  const handleNext = (name?: string, companionsList?: string[]) => {
     if (name) {
       setGuestName(name);
     }
+    if (companionsList) {
+      setCompanions(companionsList);
+    }
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleStep2DataChange = (data: { fullName: string; companions: string[] }) => {
+    // Só atualiza se os dados forem diferentes para evitar loops
+    if (
+      step2Data.fullName !== data.fullName ||
+      JSON.stringify(step2Data.companions.sort()) !== JSON.stringify(data.companions.sort())
+    ) {
+      setStep2Data(data);
+      setGuestName(data.fullName);
+      setCompanions(data.companions);
     }
   };
 
@@ -51,9 +85,30 @@ export function InviteModal({
   const handleConfirmPresence = (
     selectedGifts: Array<{ id: string | null; customGift?: string }>
   ) => {
+    // Atualizar estado do step 3 antes de confirmar
+    const selectedGiftIds: string[] = [];
+    let customGift = "";
+    let isCustomSelected = false;
+
+    selectedGifts.forEach((gift) => {
+      if (gift.id) {
+        selectedGiftIds.push(gift.id);
+      } else if (gift.customGift) {
+        customGift = gift.customGift;
+        isCustomSelected = true;
+      }
+    });
+
+    setStep3Data({
+      selectedGiftIds,
+      customGift,
+      isCustomSelected,
+    });
+
     // Aqui você salvaria a confirmação de presença e a escolha dos presentes
     console.log("Confirmação:", {
       guestName,
+      companions,
       selectedGifts,
     });
     // Mostra a tela de confirmação
@@ -87,8 +142,18 @@ export function InviteModal({
     if (!open) {
       setCurrentStep(1);
       setGuestName("");
+      setCompanions([]);
       setShowConfirmation(false);
       setGifts([]);
+      setStep2Data({
+        fullName: "",
+        companions: [],
+      });
+      setStep3Data({
+        selectedGiftIds: [],
+        customGift: "",
+        isCustomSelected: false,
+      });
     }
     onOpenChange(open);
   };
@@ -110,8 +175,24 @@ export function InviteModal({
             ) : (
               <>
                 {currentStep === 1 && <InviteStep1 onNext={handleNext} currentStep={currentStep} />}
-                {currentStep === 2 && <InviteStep2 onNext={handleNext} onBack={handleBack} />}
-                {currentStep === 3 && <InviteStep3 gifts={gifts} onBack={handleBack} onConfirm={handleConfirmPresence} requireGiftSelection={currentEvent?.requireGiftSelection} />}
+                {currentStep === 2 && (
+                  <InviteStep2
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    initialData={step2Data}
+                    onDataChange={handleStep2DataChange}
+                  />
+                )}
+                {currentStep === 3 && (
+                  <InviteStep3
+                    gifts={gifts}
+                    onBack={handleBack}
+                    onConfirm={handleConfirmPresence}
+                    requireGiftSelection={currentEvent?.requireGiftSelection}
+                    initialData={step3Data}
+                    onDataChange={setStep3Data}
+                  />
+                )}
               </>
             )}
           </div>

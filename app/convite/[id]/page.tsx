@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,6 +38,24 @@ export default function InvitePage() {
   const [gifts, setGifts] = useState<Gift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  // Estado para preservar dados do step 2
+  const [step2Data, setStep2Data] = useState<{
+    fullName: string;
+    companions: string[];
+  }>({
+    fullName: "",
+    companions: [],
+  });
+  // Estado para preservar dados do step 3
+  const [step3Data, setStep3Data] = useState<{
+    selectedGiftIds: string[];
+    customGift: string;
+    isCustomSelected: boolean;
+  }>({
+    selectedGiftIds: [],
+    customGift: "",
+    isCustomSelected: false,
+  });
   const { showToast } = useToast();
 
   // Garantir que o componente está montado no cliente antes de renderizar
@@ -109,7 +127,23 @@ export default function InvitePage() {
     // Apenas armazena os dados em estado, não salva no banco ainda
     setGuestName(guestName);
     setCompanions(companionsList);
+    setStep2Data({
+      fullName: guestName,
+      companions: companionsList,
+    });
     setCurrentStep(3);
+  };
+
+  const handleStep2DataChange = (data: { fullName: string; companions: string[] }) => {
+    // Só atualiza se os dados forem diferentes para evitar loops
+    if (
+      step2Data.fullName !== data.fullName ||
+      JSON.stringify(step2Data.companions.sort()) !== JSON.stringify(data.companions.sort())
+    ) {
+      setStep2Data(data);
+      setGuestName(data.fullName);
+      setCompanions(data.companions);
+    }
   };
 
   const handleSelectGifts = async (
@@ -125,6 +159,26 @@ export default function InvitePage() {
       showToast("Por favor, escolha pelo menos um presente para confirmar sua presença.", "error");
       return;
     }
+
+    // Atualizar estado do step 3 antes de salvar
+    const selectedGiftIds: string[] = [];
+    let customGift = "";
+    let isCustomSelected = false;
+
+    selectedGifts.forEach((gift) => {
+      if (gift.id) {
+        selectedGiftIds.push(gift.id);
+      } else if (gift.customGift) {
+        customGift = gift.customGift;
+        isCustomSelected = true;
+      }
+    });
+
+    setStep3Data({
+      selectedGiftIds,
+      customGift,
+      isCustomSelected,
+    });
 
     try {
       const giftIds: string[] = [];
@@ -264,6 +318,8 @@ export default function InvitePage() {
                       handleConfirmPresence(guestName, companions);
                     }}
                     onBack={handleBack}
+                    initialData={step2Data}
+                    onDataChange={handleStep2DataChange}
                   />
                 )}
                 {currentStep === 3 && (
@@ -272,6 +328,8 @@ export default function InvitePage() {
                     onBack={handleBack}
                     onConfirm={handleSelectGifts}
                     requireGiftSelection={tea.requireGiftSelection}
+                    initialData={step3Data}
+                    onDataChange={setStep3Data}
                   />
                 )}
               </>
@@ -432,12 +490,19 @@ function InviteStep2Wrapper({
   settings,
   onNext,
   onBack,
+  initialData,
+  onDataChange,
 }: {
   settings: {
     maxCompanionsPerGuest: number;
   };
   onNext: (guestName: string, companions: string[]) => void;
   onBack: () => void;
+  initialData?: {
+    fullName?: string;
+    companions?: string[];
+  };
+  onDataChange?: (data: { fullName: string; companions: string[] }) => void;
 }) {
   const MAX_COMPANIONS = settings.maxCompanionsPerGuest;
 
@@ -459,14 +524,79 @@ function InviteStep2Wrapper({
     ReturnType<typeof createConfirmationSchema>
   >;
 
+  const isSyncingRef = useRef(false);
+  const lastSyncedDataRef = useRef<{ fullName: string; companions: string[] } | null>(null);
+
   const form = useForm<ConfirmationFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(createConfirmationSchema(MAX_COMPANIONS)) as any,
     defaultValues: {
-      fullName: "",
-      companions: [],
+      fullName: initialData?.fullName || "",
+      companions: initialData?.companions?.map(name => ({ name })) || [],
     },
   });
+
+  // Atualizar o form quando initialData mudar (apenas se for diferente)
+  useEffect(() => {
+    if (initialData && !isSyncingRef.current) {
+      const currentFullName = form.getValues("fullName");
+      const currentCompanions = form.getValues("companions").map(c => c.name).filter(n => n.trim());
+      const newFullName = initialData.fullName || "";
+      const newCompanions = (initialData.companions || []).filter(n => n.trim());
+
+      // Só atualiza se os dados forem diferentes
+      if (
+        currentFullName !== newFullName ||
+        JSON.stringify(currentCompanions.sort()) !== JSON.stringify(newCompanions.sort())
+      ) {
+        isSyncingRef.current = true;
+        form.reset({
+          fullName: newFullName,
+          companions: newCompanions.map(name => ({ name })),
+        });
+        // Atualizar a referência também para evitar notificação desnecessária
+        lastSyncedDataRef.current = {
+          fullName: newFullName,
+          companions: newCompanions,
+        };
+        setTimeout(() => {
+          isSyncingRef.current = false;
+        }, 0);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData]);
+
+  // Notificar mudanças nos dados para o componente pai (apenas quando realmente mudar)
+  const formValues = useWatch({ control: form.control });
+  useEffect(() => {
+    // Aguardar um pouco para garantir que não estamos sincronizando
+    const timeoutId = setTimeout(() => {
+      if (onDataChange && formValues && !isSyncingRef.current) {
+        const companionsList = (formValues.companions || [])
+          .map((c) => c.name)
+          .filter((name) => name?.trim());
+        
+        const newData = {
+          fullName: formValues.fullName || "",
+          companions: companionsList,
+        };
+
+        // Só notifica se os dados forem diferentes dos últimos sincronizados
+        const lastSynced = lastSyncedDataRef.current;
+        if (
+          !lastSynced ||
+          lastSynced.fullName !== newData.fullName ||
+          JSON.stringify(lastSynced.companions.sort()) !== JSON.stringify(newData.companions.sort())
+        ) {
+          lastSyncedDataRef.current = newData;
+          onDataChange(newData);
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [formValues, onDataChange]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
