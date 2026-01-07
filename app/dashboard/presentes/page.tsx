@@ -3,19 +3,21 @@
 import { GiftsHeader } from "@/components/dashboard/GiftsHeader";
 import { GiftsSummary } from "@/components/dashboard/GiftsSummary";
 import { GiftsGrid } from "@/components/dashboard/GiftsGrid";
+import { CustomGiftsList } from "@/components/dashboard/CustomGiftsList";
 import { AddGiftModal } from "@/components/dashboard/AddGiftModal";
 import { DeleteGiftModal } from "@/components/dashboard/DeleteGiftModal";
 import { InviteModal } from "@/components/dashboard/InviteModal";
 import { WelcomeScreen } from "@/components/dashboard/WelcomeScreen";
 import { EventContext } from "@/contexts/EventContext";
 import { useContext, useState, useEffect } from "react";
-import { getGifts, createGift, updateGift, deleteGift } from "@/actions/gift";
-import type { Gift } from "@/actions/gift";
+import { getGifts, getCustomGifts, createGift, updateGift, deleteGift } from "@/actions/gift";
+import type { Gift, CustomGiftListItem } from "@/actions/gift";
 import { useToast } from "@/components/ui/toast";
 
 export default function GiftsPage() {
   const eventContext = useContext(EventContext);
   const [gifts, setGifts] = useState<Gift[]>([]);
+  const [customGifts, setCustomGifts] = useState<CustomGiftListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -33,12 +35,17 @@ export default function GiftsPage() {
     
     try {
       setIsLoading(true);
-      const giftsData = await getGifts(currentEvent.id);
+      const [giftsData, customGiftsData] = await Promise.all([
+        getGifts(currentEvent.id),
+        getCustomGifts(currentEvent.id),
+      ]);
       setGifts(giftsData);
+      setCustomGifts(customGiftsData);
     } catch (error) {
       console.error("Erro ao carregar presentes:", error);
       showToast("Erro ao carregar presentes. Tente novamente.", "error");
       setGifts([]);
+      setCustomGifts([]);
     } finally {
       setIsLoading(false);
     }
@@ -199,6 +206,8 @@ export default function GiftsPage() {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+
+      <CustomGiftsList customGifts={customGifts} />
 
       <AddGiftModal
         open={isModalOpen}
