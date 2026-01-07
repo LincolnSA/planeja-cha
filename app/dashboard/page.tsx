@@ -7,7 +7,7 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { EventInfo } from "@/components/dashboard/EventInfo";
 import { InviteModal } from "@/components/dashboard/InviteModal";
 import { WelcomeScreen } from "@/components/dashboard/WelcomeScreen";
-import { Users, Gift } from "lucide-react";
+import { Users, Gift, UserCheck } from "lucide-react";
 import { EventContext } from "@/contexts/EventContext";
 import { getGuests } from "@/actions/guest";
 import { getGifts } from "@/actions/gift";
@@ -63,8 +63,8 @@ export default function DashboardPage() {
   // Calcular métricas baseadas nos dados reais
   const totalGuests = guests.length;
   const totalCompanions = guests.reduce((sum, guest) => sum + guest.companionsTotal, 0);
-  const confirmedGuests = totalCompanions; // Confirmados = total de acompanhantes
   const totalPeople = totalGuests + totalCompanions;
+  const confirmedGuests = totalPeople; // Confirmados = total de convidados + total de acompanhantes
   const totalGifts = gifts.length;
   const chosenGifts = gifts.reduce((sum, gift) => sum + gift.chosen, 0);
 
@@ -86,14 +86,14 @@ export default function DashboardPage() {
       {/* Metrics Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          icon={Users}
+          icon={UserCheck}
           value={totalGuests}
-          label="Total de Convidados"
+          label="Convites confirmados"
         />
         <MetricCard
           icon={Users}
           value={confirmedGuests}
-          label="Confirmados"
+          label="Convidados + Acompanhantes"
           variant="orange"
         />
         <MetricCard
