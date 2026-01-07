@@ -7,14 +7,17 @@ import { GuestDetailsModal } from "@/components/dashboard/GuestDetailsModal";
 import { InviteModal } from "@/components/dashboard/InviteModal";
 import { WelcomeScreen } from "@/components/dashboard/WelcomeScreen";
 import { EventContext } from "@/contexts/EventContext";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import { getGuestById, getGuests } from "@/actions/guest";
 import type { GuestDetails, GuestListItem } from "@/actions/guest";
 import { useToast } from "@/components/ui/toast";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 export default function GuestsPage() {
   const eventContext = useContext(EventContext);
   const [guests, setGuests] = useState<GuestListItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -56,6 +59,34 @@ export default function GuestsPage() {
   if (!eventContext || eventContext.events.length === 0 || !currentEvent) {
     return <WelcomeScreen />;
   }
+
+  // Filtrar convidados baseado na busca
+  const filteredGuests = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return guests.map((guest) => ({ guest, matchType: null as "guest" | "companion" | null }));
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+    const results: Array<{ guest: GuestListItem; matchType: "guest" | "companion" | null }> = [];
+
+    guests.forEach((guest) => {
+      // Verificar se o nome do convidado corresponde
+      if (guest.name.toLowerCase().includes(query)) {
+        results.push({ guest, matchType: "guest" });
+        return;
+      }
+
+      // Verificar se algum acompanhante corresponde
+      const matchingCompanion = guest.companions.find((companion) =>
+        companion.toLowerCase().includes(query)
+      );
+      if (matchingCompanion) {
+        results.push({ guest, matchType: "companion" });
+      }
+    });
+
+    return results;
+  }, [guests, searchQuery]);
 
   const totalGuests = guests.length;
   const totalPeople = guests.reduce(
@@ -108,12 +139,25 @@ export default function GuestsPage() {
         onViewInvite={() => setIsInviteModalOpen(true)}
       />
 
+      {/* Filtro de busca */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Buscar por nome do convidado ou acompanhante..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
       <GuestsSummary
         totalPeople={totalPeople}
       />
 
       <GuestsTable
-        guests={guests}
+        guests={filteredGuests.map((item) => item.guest)}
+        matchTypes={filteredGuests.map((item) => item.matchType)}
         onView={handleViewGuest}
       />
 

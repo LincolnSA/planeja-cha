@@ -7,6 +7,7 @@ export interface GuestListItem {
   id: string;
   name: string;
   companionsTotal: number;
+  companions: string[]; // Nomes dos acompanhantes
   giftsCount: number;
   createdAt: Date;
   updatedAt: Date;
@@ -41,6 +42,7 @@ export async function getGuests(teaId: string): Promise<GuestListItem[]> {
     id: guest.id,
     name: guest.name,
     companionsTotal: guest.companions.length,
+    companions: guest.companions.map((c) => c.name),
     giftsCount: guest.giftSelections.length + guest.customGifts.length,
     createdAt: guest.createdAt,
     updatedAt: guest.updatedAt,
