@@ -88,7 +88,6 @@ export function EventSelector() {
       customMessage: values.customMessage || "",
       isActive: true,
       requireGiftSelection: false,
-      requireGiftSelection: false,
     });
     
     if (result) {
