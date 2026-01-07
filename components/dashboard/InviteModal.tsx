@@ -111,7 +111,7 @@ export function InviteModal({
               <>
                 {currentStep === 1 && <InviteStep1 onNext={handleNext} currentStep={currentStep} />}
                 {currentStep === 2 && <InviteStep2 onNext={handleNext} onBack={handleBack} />}
-                {currentStep === 3 && <InviteStep3 gifts={gifts} onBack={handleBack} onConfirm={handleConfirmPresence} />}
+                {currentStep === 3 && <InviteStep3 gifts={gifts} onBack={handleBack} onConfirm={handleConfirmPresence} requireGiftSelection={currentEvent?.requireGiftSelection} />}
               </>
             )}
           </div>

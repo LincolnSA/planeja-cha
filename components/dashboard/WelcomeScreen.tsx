@@ -85,6 +85,7 @@ export function WelcomeScreen() {
       ...values,
       customMessage: values.customMessage || "",
       isActive: true,
+      requireGiftSelection: false,
     });
     
     if (result) {

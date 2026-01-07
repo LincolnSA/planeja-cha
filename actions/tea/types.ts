@@ -11,6 +11,7 @@ export interface CreateTeaResultSuccess {
     maxCompanionsPerGuest: number;
     inviteLink: string;
     isActive: boolean;
+    requireGiftSelection: boolean;
     userId: string;
     createdAt: Date;
     updatedAt: Date;

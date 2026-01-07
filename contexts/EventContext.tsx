@@ -16,6 +16,7 @@ export interface EventSettings {
   maxCompanionsPerGuest: number;
   inviteLink: string;
   isActive: boolean;
+  requireGiftSelection: boolean;
   createdAt: string;
 }
 
@@ -47,6 +48,7 @@ function mapTeaToEventSettings(tea: {
   maxCompanionsPerGuest: number;
   inviteLink: string;
   isActive: boolean;
+  requireGiftSelection: boolean;
   createdAt: Date;
 }): EventSettings {
   // Converte Date para string no formato HH:MM
@@ -81,6 +83,7 @@ function mapTeaToEventSettings(tea: {
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
     inviteLink: tea.inviteLink,
     isActive: tea.isActive,
+    requireGiftSelection: tea.requireGiftSelection,
     createdAt: tea.createdAt.toISOString(),
   };
 }
@@ -197,6 +200,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
         customMessage?: string;
         maxCompanionsPerGuest?: number;
         isActive?: boolean;
+        requireGiftSelection?: boolean;
       } = {};
       
       if (settings.eventName !== undefined) updateData.name = settings.eventName;
@@ -225,6 +229,9 @@ export function EventProvider({ children }: { children: ReactNode }) {
       if (settings.customMessage !== undefined) updateData.customMessage = settings.customMessage;
       if (settings.maxCompanionsPerGuest !== undefined) {
         updateData.maxCompanionsPerGuest = settings.maxCompanionsPerGuest;
+      }
+      if (settings.requireGiftSelection !== undefined) {
+        updateData.requireGiftSelection = settings.requireGiftSelection;
       }
 
       const updated = await updateTea(eventId, updateData);

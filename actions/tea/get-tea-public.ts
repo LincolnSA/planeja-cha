@@ -12,6 +12,7 @@ export interface PublicTea {
   customMessage: string;
   maxCompanionsPerGuest: number;
   isActive: boolean;
+  requireGiftSelection: boolean;
 }
 
 /**
@@ -72,6 +73,7 @@ export async function getTeaPublic(teaId: string): Promise<PublicTea | null> {
     customMessage: tea.customMessage,
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
     isActive: tea.isActive,
+    requireGiftSelection: tea.requireGiftSelection,
   };
 }
 

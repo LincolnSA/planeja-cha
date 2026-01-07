@@ -23,6 +23,7 @@ export interface Tea {
   maxCompanionsPerGuest: number;
   inviteLink: string;
   isActive: boolean;
+  requireGiftSelection: boolean;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -54,6 +55,7 @@ export async function createTeaInDb(data: CreateTeaData): Promise<Tea> {
     maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
     inviteLink: tea.inviteLink,
     isActive: tea.isActive,
+    requireGiftSelection: tea.requireGiftSelection,
     userId: tea.userId,
     createdAt: tea.createdAt,
     updatedAt: tea.updatedAt,

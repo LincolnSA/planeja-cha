@@ -120,6 +120,12 @@ export default function InvitePage() {
       return;
     }
 
+    // Validação: se requireGiftSelection é true, deve ter pelo menos um presente
+    if (tea.requireGiftSelection && selectedGifts.length === 0) {
+      showToast("Por favor, escolha pelo menos um presente para confirmar sua presença.", "error");
+      return;
+    }
+
     try {
       const giftIds: string[] = [];
       const customGifts: Array<{ title: string; description?: string }> = [];
@@ -265,6 +271,7 @@ export default function InvitePage() {
                     gifts={gifts}
                     onBack={handleBack}
                     onConfirm={handleSelectGifts}
+                    requireGiftSelection={tea.requireGiftSelection}
                   />
                 )}
               </>

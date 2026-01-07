@@ -87,6 +87,8 @@ export function EventSelector() {
       ...values,
       customMessage: values.customMessage || "",
       isActive: true,
+      requireGiftSelection: false,
+      requireGiftSelection: false,
     });
     
     if (result) {

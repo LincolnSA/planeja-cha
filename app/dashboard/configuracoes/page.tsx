@@ -6,6 +6,7 @@ import { SettingsHeader } from "@/components/dashboard/SettingsHeader";
 import { EventInfoForm } from "@/components/dashboard/EventInfoForm";
 import { GuestSettingsForm } from "@/components/dashboard/GuestSettingsForm";
 import { TeaStatusSwitch } from "@/components/dashboard/TeaStatusSwitch";
+import { RequireGiftSelectionSwitch } from "@/components/dashboard/RequireGiftSelectionSwitch";
 import { InviteModal } from "@/components/dashboard/InviteModal";
 import { DeleteTeaModal } from "@/components/dashboard/DeleteTeaModal";
 import { WelcomeScreen } from "@/components/dashboard/WelcomeScreen";
@@ -65,6 +66,8 @@ export default function SettingsPage() {
       <GuestSettingsForm />
 
       <TeaStatusSwitch />
+
+      <RequireGiftSelectionSwitch />
 
       {/* Seção de Excluir Chá */}
       <Card className="border-red-200">

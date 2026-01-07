@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Heart, Gift as GiftIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
 import type { Gift } from "@/actions/gift";
 
 interface SelectedGift {
@@ -20,13 +21,16 @@ interface InviteStep3Props {
   gifts: Gift[];
   onBack: () => void;
   onConfirm: (selectedGifts: SelectedGift[]) => void;
+  requireGiftSelection?: boolean;
 }
 
 export function InviteStep3({
   gifts,
   onBack,
   onConfirm,
+  requireGiftSelection = false,
 }: InviteStep3Props) {
+  const { showToast } = useToast();
   const [selectedGifts, setSelectedGifts] = useState<Set<string>>(new Set());
   const [customGift, setCustomGift] = useState<string>("");
   const [isCustomSelected, setIsCustomSelected] = useState(false);
@@ -74,6 +78,12 @@ export function InviteStep3({
     // Adiciona presente customizado se selecionado e preenchido
     if (isCustomSelected && customGift.trim()) {
       selected.push({ id: null, customGift: customGift.trim() });
+    }
+
+    // Validação: se requireGiftSelection é true, deve ter pelo menos um presente
+    if (requireGiftSelection && selected.length === 0) {
+      showToast("Por favor, escolha pelo menos um presente para confirmar sua presença.", "error");
+      return;
     }
 
     onConfirm(selected);
@@ -226,15 +236,17 @@ export function InviteStep3({
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <Button
-            onClick={handleConfirm}
-            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm sm:text-base"
-          >
-            <span className="hidden sm:inline">Confirmar presença</span>
-            <span className="sm:hidden">Confirmar</span>
-            <Heart className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        <Button
+          onClick={handleConfirm}
+          className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm sm:text-base"
+          disabled={requireGiftSelection && selectedGifts.size === 0 && !(isCustomSelected && customGift.trim())}
+        >
+          <span className="hidden sm:inline">Confirmar presença</span>
+          <span className="sm:hidden">Confirmar</span>
+          <Heart className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+      {!requireGiftSelection && (
         <Button
           type="button"
           variant="ghost"
@@ -243,6 +255,7 @@ export function InviteStep3({
         >
           Confirmar sem escolher presente
         </Button>
+      )}
       </div>
     </div>
   );

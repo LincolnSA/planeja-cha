@@ -116,6 +116,7 @@ export async function createTea(
         maxCompanionsPerGuest: tea.maxCompanionsPerGuest,
         inviteLink: tea.inviteLink,
         isActive: tea.isActive,
+        requireGiftSelection: tea.requireGiftSelection,
         userId: tea.userId,
         createdAt: tea.createdAt,
         updatedAt: tea.updatedAt,
