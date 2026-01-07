@@ -95,15 +95,15 @@ export function InviteModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 w-[95vw] sm:w-full">
-        <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0 w-[95vw] sm:w-full">
+        <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4 shrink-0">
           <DialogTitle className="text-lg sm:text-xl">Visualizar Convite</DialogTitle>
           <DialogDescription className="text-sm">
             Visualize como o convidado verá o convite e confirme a presença
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-3 sm:px-4 md:px-6 pb-4 sm:pb-6">
+        <div className="px-3 sm:px-4 md:px-6 pb-4 sm:pb-6 overflow-y-auto flex-1 min-h-0">
           <div className="rounded-lg bg-background">
             {showConfirmation ? (
               <InviteConfirmation guestName={guestName} />

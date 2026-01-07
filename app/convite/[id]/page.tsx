@@ -356,7 +356,7 @@ function InviteStep1Wrapper({
       </div>
 
       {/* Event Details */}
-      <div className="flex gap-3 w-1/2 mx-auto flex-wrap justify-center">
+      <div className="flex gap-3 w-full sm:w-1/2 mx-auto flex-wrap justify-center px-4">
         <div className="flex items-center justify-center gap-2 sm:gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:px-4 sm:py-3 flex-1 sm:flex-initial min-w-[140px]">
           <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 shrink-0" />
           <span className="text-sm sm:text-base text-foreground truncate">{settings.date}</span>
@@ -365,9 +365,9 @@ function InviteStep1Wrapper({
           <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 shrink-0" />
           <span className="text-sm sm:text-base text-foreground truncate">{settings.time}</span>
         </div>
-        <div className="flex items-center justify-center gap-2 sm:gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:px-4 sm:py-3 flex-1 sm:flex-initial min-w-[140px]">
-          <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 shrink-0" />
-          <span className="text-sm sm:text-base text-foreground truncate">{settings.location}</span>
+        <div className="flex items-start sm:items-center gap-2 sm:gap-3 rounded-lg border border-border bg-background px-3 py-2 sm:px-4 sm:py-3 w-full sm:flex-1 sm:flex-initial sm:min-w-[140px]">
+          <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 shrink-0 mt-0.5 sm:mt-0" />
+          <span className="text-sm sm:text-base text-foreground break-words flex-1 text-left sm:text-center">{settings.location}</span>
         </div>
       </div>
 
