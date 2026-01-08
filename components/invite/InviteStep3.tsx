@@ -308,7 +308,7 @@ export function InviteStep3({
                   </Badge>
                 </div>
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  Digite o presente que você gostaria de doar
+                  Digite o presente que você gostaria de doar: Fralda M ou G + ...
                 </p>
                 {isCustomSelected && (
                   <div className="mt-2 w-full">
@@ -340,26 +340,26 @@ export function InviteStep3({
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-        <Button
-          onClick={handleConfirm}
-          className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm sm:text-base"
-          disabled={requireGiftSelection && selectedGifts.size === 0 && !(isCustomSelected && customGift.trim())}
-        >
-          <span className="hidden sm:inline">Confirmar presença</span>
-          <span className="sm:hidden">Confirmar</span>
-          <Heart className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
-      {!requireGiftSelection && (
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => onConfirm([])}
-          className="w-full text-xs sm:text-sm text-muted-foreground hover:text-foreground"
-        >
-          Confirmar sem escolher presente
-        </Button>
-      )}
+          <Button
+            onClick={handleConfirm}
+            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm sm:text-base"
+            disabled={requireGiftSelection && selectedGifts.size === 0 && !(isCustomSelected && customGift.trim())}
+          >
+            <span className="hidden sm:inline">Confirmar presença</span>
+            <span className="sm:hidden">Confirmar</span>
+            <Heart className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+        {!requireGiftSelection && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onConfirm([])}
+            className="w-full text-xs sm:text-sm text-muted-foreground hover:text-foreground"
+          >
+            Confirmar sem escolher presente
+          </Button>
+        )}
       </div>
     </div>
   );
