@@ -24,6 +24,7 @@ export function GuestDetailsModal({
   guest,
   isLoading = false,
 }: GuestDetailsModalProps) {
+
   if (isLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>

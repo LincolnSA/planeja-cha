@@ -58,12 +58,7 @@ export default function GuestsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEvent?.id]);
 
-  // Se não há eventos ou não há evento selecionado, mostrar tela de boas-vindas
-  if (!eventContext || eventContext.events.length === 0 || !currentEvent) {
-    return <WelcomeScreen />;
-  }
-
-  // Filtrar convidados baseado na busca
+  // Filtrar convidados baseado na busca (deve estar antes de qualquer early return)
   const filteredGuests = useMemo(() => {
     if (!searchQuery.trim()) {
       return guests.map((guest) => ({ guest, matchType: null as "guest" | "companion" | null }));
@@ -90,6 +85,11 @@ export default function GuestsPage() {
 
     return results;
   }, [guests, searchQuery]);
+
+  // Se não há eventos ou não há evento selecionado, mostrar tela de boas-vindas
+  if (!eventContext || eventContext.events.length === 0 || !currentEvent) {
+    return <WelcomeScreen />;
+  }
 
   const totalGuests = guests.length;
   const totalPeople = guests.reduce(
@@ -271,12 +271,14 @@ export default function GuestsPage() {
         onCopy={handleCopyGuestInfo}
       />
 
-      <GuestDetailsModal
-        open={isDetailsModalOpen}
-        onOpenChange={handleDetailsModalClose}
-        guest={selectedGuest}
-        isLoading={isLoadingGuest}
-      />
+      {isDetailsModalOpen && (
+        <GuestDetailsModal
+          open={isDetailsModalOpen}
+          onOpenChange={handleDetailsModalClose}
+          guest={selectedGuest}
+          isLoading={isLoadingGuest}
+        />
+      )}
 
       <InviteModal
         open={isInviteModalOpen}
