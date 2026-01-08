@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Copy, Share2, CheckCircle2 } from "lucide-react";
+import { Heart, Copy, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface SelectedGiftInfo {
@@ -83,39 +83,6 @@ export function InviteConfirmation({
     }
   };
 
-  const shareConfirmation = async () => {
-    try {
-      let shareText = `Confirmei minha presença no ${eventTitle}!\n\n`;
-      shareText += `📅 ${eventDate} às ${eventTime}\n`;
-      shareText += `📍 ${eventLocation}`;
-      
-      if (companions.length > 0) {
-        shareText += `\n👥 Acompanhantes: ${companions.join(", ")}`;
-      }
-      
-      if (selectedGifts.length > 0) {
-        shareText += `\n\n🎁 Presentes escolhidos: ${selectedGifts.map(g => g.title).join(", ")}`;
-      }
-      
-      const shareData = {
-        title: `Confirmação de Presença - ${eventTitle}`,
-        text: shareText,
-      };
-
-      if (navigator.share && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
-      } else {
-        // Fallback: copiar para área de transferência
-        await copyToClipboard();
-      }
-    } catch (error) {
-      if ((error as Error).name !== "AbortError") {
-        console.error("Erro ao compartilhar:", error);
-        // Fallback: copiar para área de transferência
-        await copyToClipboard();
-      }
-    }
-  };
 
   return (
     <div ref={confirmationRef} className="flex flex-col items-center space-y-4 sm:space-y-6 py-6 sm:py-8 px-2">
@@ -152,11 +119,11 @@ export function InviteConfirmation({
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md px-2">
+      <div className="flex justify-center w-full max-w-md px-2">
         <Button
           onClick={copyToClipboard}
           variant="outline"
-          className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50"
+          className="w-full sm:w-auto border-orange-600 text-orange-600 hover:bg-orange-50"
         >
           {copied ? (
             <>
@@ -169,13 +136,6 @@ export function InviteConfirmation({
               Copiar Informações
             </>
           )}
-        </Button>
-        <Button
-          onClick={shareConfirmation}
-          className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
-        >
-          <Share2 className="mr-2 h-4 w-4" />
-          Compartilhar
         </Button>
       </div>
     </div>
