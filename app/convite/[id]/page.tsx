@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Calendar, Clock, MapPin, Heart, Baby, CheckCircle2, Users, Plus, ArrowLeft, ArrowRight, X } from "lucide-react";
 import { InviteStep3 } from "@/components/invite/InviteStep3";
 import { InviteStepper } from "@/components/invite/InviteStepper";
+import { InviteConfirmation } from "@/components/invite/InviteConfirmation";
 import { getTeaPublic } from "@/actions/tea/get-tea-public";
 import { getGiftsPublic } from "@/actions/gift";
 import { confirmPresenceAndSelectGifts } from "@/actions/guest";
@@ -56,6 +57,12 @@ export default function InvitePage() {
     customGift: "",
     isCustomSelected: false,
   });
+  const [selectedGiftsInfo, setSelectedGiftsInfo] = useState<Array<{
+    id: string | null;
+    title: string;
+    description?: string;
+    isCustom?: boolean;
+  }>>([]);
   const { showToast } = useToast();
 
   // Garantir que o componente está montado no cliente antes de renderizar
@@ -202,6 +209,37 @@ export default function InvitePage() {
       });
 
       if (result.success) {
+        // Preparar informações dos presentes escolhidos para exibição
+        const giftsInfo: Array<{
+          id: string | null;
+          title: string;
+          description?: string;
+          isCustom?: boolean;
+        }> = [];
+
+        // Adicionar presentes da lista
+        selectedGiftIds.forEach((giftId) => {
+          const gift = gifts.find((g) => g.id === giftId);
+          if (gift) {
+            giftsInfo.push({
+              id: gift.id,
+              title: gift.title,
+              description: gift.description,
+              isCustom: false,
+            });
+          }
+        });
+
+        // Adicionar presente customizado
+        if (isCustomSelected && customGift.trim()) {
+          giftsInfo.push({
+            id: null,
+            title: customGift.trim(),
+            isCustom: true,
+          });
+        }
+
+        setSelectedGiftsInfo(giftsInfo);
         setShowConfirmation(true);
       } else {
         showToast(result.error || "Erro ao confirmar presença e selecionar presentes.", "error");
@@ -301,6 +339,10 @@ export default function InvitePage() {
               <InviteConfirmationWrapper
                 guestName={guestName}
                 settings={settings}
+                selectedGifts={selectedGiftsInfo}
+                companions={companions}
+                eventName={tea.name}
+                parentsName={tea.parentsName}
               />
             ) : (
               <>
@@ -347,6 +389,10 @@ export default function InvitePage() {
 function InviteConfirmationWrapper({
   guestName,
   settings,
+  selectedGifts = [],
+  companions = [],
+  eventName,
+  parentsName,
 }: {
   guestName: string;
   settings: {
@@ -354,38 +400,27 @@ function InviteConfirmationWrapper({
     time: string;
     location: string;
   };
+  selectedGifts?: Array<{
+    id: string | null;
+    title: string;
+    description?: string;
+    isCustom?: boolean;
+  }>;
+  companions?: string[];
+  eventName?: string;
+  parentsName?: string;
 }) {
   return (
-    <div className="flex flex-col items-center space-y-6 py-8">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
-        <Heart className="h-8 w-8 text-orange-600 fill-orange-600" />
-      </div>
-
-      <div className="flex flex-col items-center gap-2 px-4">
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground text-center">
-          Obrigado, {guestName}! 🎉
-        </h2>
-        <p className="text-base sm:text-lg text-muted-foreground text-center">
-          Sua presença foi confirmada com sucesso.
-        </p>
-      </div>
-
-      <Card className="w-full max-w-md shadow-md mx-4">
-        <CardContent className="p-4 sm:p-6">
-          <div className="space-y-4">
-            <h3 className="text-lg sm:text-xl font-bold text-foreground text-center">
-              Nos vemos em breve!
-            </h3>
-            <div className="space-y-2 text-sm sm:text-base text-foreground text-center">
-              <p>
-                {settings.date} às {settings.time}
-              </p>
-              <p>{settings.location}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <InviteConfirmation
+      guestName={guestName}
+      selectedGifts={selectedGifts}
+      companions={companions}
+      eventName={eventName}
+      parentsName={parentsName}
+      date={settings.date}
+      time={settings.time}
+      location={settings.location}
+    />
   );
 }
 

@@ -1,18 +1,124 @@
 "use client";
 
+import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart } from "lucide-react";
-import { useEvent } from "@/contexts/EventContext";
+import { Button } from "@/components/ui/button";
+import { Heart, Copy, Share2, CheckCircle2 } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
+
+interface SelectedGiftInfo {
+  id: string | null;
+  title: string;
+  description?: string;
+  isCustom?: boolean;
+}
 
 interface InviteConfirmationProps {
   guestName: string;
+  selectedGifts?: SelectedGiftInfo[];
+  companions?: string[];
+  eventName?: string;
+  parentsName?: string;
+  date?: string;
+  time?: string;
+  location?: string;
 }
 
-export function InviteConfirmation({ guestName }: InviteConfirmationProps) {
-  const { settings } = useEvent();
+export function InviteConfirmation({ 
+  guestName, 
+  selectedGifts = [],
+  companions = [],
+  eventName = "",
+  parentsName = "",
+  date = "",
+  time = "",
+  location = "",
+}: InviteConfirmationProps) {
+  const { showToast } = useToast();
+  const [copied, setCopied] = useState(false);
+  const confirmationRef = useRef<HTMLDivElement>(null);
+
+  // Usar props fornecidas
+  const eventDate = date;
+  const eventTime = time;
+  const eventLocation = location;
+  const eventTitle = eventName;
+  const eventParents = parentsName;
+
+  const copyToClipboard = async () => {
+    try {
+      let text = `🎉 Confirmação de Presença\n\n`;
+      text += `Evento: ${eventTitle}\n`;
+      text += `Organizado por: ${eventParents}\n`;
+      text += `Convidado: ${guestName}\n`;
+      
+      if (companions.length > 0) {
+        text += `Acompanhantes: ${companions.join(", ")}\n`;
+      }
+      
+      text += `\n📅 Data: ${eventDate} às ${eventTime}\n`;
+      text += `📍 Local: ${eventLocation}\n\n`;
+
+      if (selectedGifts.length > 0) {
+        text += `🎁 Presentes Escolhidos:\n`;
+        selectedGifts.forEach((gift, index) => {
+          text += `${index + 1}. ${gift.title}`;
+          if (gift.description) {
+            text += ` - ${gift.description}`;
+          }
+          if (gift.isCustom) {
+            text += ` (Personalizado)`;
+          }
+          text += `\n`;
+        });
+      }
+
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      showToast("Informações copiadas para a área de transferência!", "success");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      showToast("Erro ao copiar informações.", "error");
+      console.error("Erro ao copiar:", error);
+    }
+  };
+
+  const shareConfirmation = async () => {
+    try {
+      let shareText = `Confirmei minha presença no ${eventTitle}!\n\n`;
+      shareText += `📅 ${eventDate} às ${eventTime}\n`;
+      shareText += `📍 ${eventLocation}`;
+      
+      if (companions.length > 0) {
+        shareText += `\n👥 Acompanhantes: ${companions.join(", ")}`;
+      }
+      
+      if (selectedGifts.length > 0) {
+        shareText += `\n\n🎁 Presentes escolhidos: ${selectedGifts.map(g => g.title).join(", ")}`;
+      }
+      
+      const shareData = {
+        title: `Confirmação de Presença - ${eventTitle}`,
+        text: shareText,
+      };
+
+      if (navigator.share && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: copiar para área de transferência
+        await copyToClipboard();
+      }
+    } catch (error) {
+      if ((error as Error).name !== "AbortError") {
+        console.error("Erro ao compartilhar:", error);
+        // Fallback: copiar para área de transferência
+        await copyToClipboard();
+      }
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center space-y-4 sm:space-y-6 py-6 sm:py-8 px-2">
+    <div ref={confirmationRef} className="flex flex-col items-center space-y-4 sm:space-y-6 py-6 sm:py-8 px-2">
       {/* Icon */}
       <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-orange-100 shrink-0">
         <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 fill-orange-600" />
@@ -37,13 +143,41 @@ export function InviteConfirmation({ guestName }: InviteConfirmationProps) {
             </h3>
             <div className="space-y-2 text-sm sm:text-base text-foreground text-center">
               <p>
-                {settings.date} às {settings.time}
+                {eventDate} às {eventTime}
               </p>
-              <p>{settings.location}</p>
+              <p>{eventLocation}</p>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md px-2">
+        <Button
+          onClick={copyToClipboard}
+          variant="outline"
+          className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50"
+        >
+          {copied ? (
+            <>
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              Copiado!
+            </>
+          ) : (
+            <>
+              <Copy className="mr-2 h-4 w-4" />
+              Copiar Informações
+            </>
+          )}
+        </Button>
+        <Button
+          onClick={shareConfirmation}
+          className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+        >
+          <Share2 className="mr-2 h-4 w-4" />
+          Compartilhar
+        </Button>
+      </div>
     </div>
   );
 }

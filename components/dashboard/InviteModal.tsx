@@ -49,6 +49,12 @@ export function InviteModal({
     customGift: "",
     isCustomSelected: false,
   });
+  const [selectedGiftsInfo, setSelectedGiftsInfo] = useState<Array<{
+    id: string | null;
+    title: string;
+    description?: string;
+    isCustom?: boolean;
+  }>>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoadingGifts, setIsLoadingGifts] = useState(false);
 
@@ -105,6 +111,38 @@ export function InviteModal({
       isCustomSelected,
     });
 
+    // Preparar informações dos presentes escolhidos para exibição
+    const giftsInfo: Array<{
+      id: string | null;
+      title: string;
+      description?: string;
+      isCustom?: boolean;
+    }> = [];
+
+    // Adicionar presentes da lista
+    selectedGiftIds.forEach((giftId) => {
+      const gift = gifts.find((g) => g.id === giftId);
+      if (gift) {
+        giftsInfo.push({
+          id: gift.id,
+          title: gift.title,
+          description: gift.description,
+          isCustom: false,
+        });
+      }
+    });
+
+    // Adicionar presente customizado
+    if (isCustomSelected && customGift.trim()) {
+      giftsInfo.push({
+        id: null,
+        title: customGift.trim(),
+        isCustom: true,
+      });
+    }
+
+    setSelectedGiftsInfo(giftsInfo);
+
     // Aqui você salvaria a confirmação de presença e a escolha dos presentes
     console.log("Confirmação:", {
       guestName,
@@ -154,6 +192,7 @@ export function InviteModal({
         customGift: "",
         isCustomSelected: false,
       });
+      setSelectedGiftsInfo([]);
     }
     onOpenChange(open);
   };
@@ -171,7 +210,16 @@ export function InviteModal({
         <div className="px-3 sm:px-4 md:px-6 pb-4 sm:pb-6 overflow-y-auto flex-1 min-h-0">
           <div className="rounded-lg bg-background">
             {showConfirmation ? (
-              <InviteConfirmation guestName={guestName} />
+              <InviteConfirmation
+                guestName={guestName}
+                selectedGifts={selectedGiftsInfo}
+                companions={companions}
+                eventName={currentEvent?.eventName}
+                parentsName={currentEvent?.parentsName}
+                date={currentEvent?.date}
+                time={currentEvent?.time}
+                location={currentEvent?.location}
+              />
             ) : (
               <>
                 {currentStep === 1 && <InviteStep1 onNext={handleNext} currentStep={currentStep} />}
