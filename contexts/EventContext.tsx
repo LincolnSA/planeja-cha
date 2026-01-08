@@ -53,9 +53,9 @@ function mapTeaToEventSettings(tea: {
   requireGiftSelection: boolean;
   createdAt: Date;
 }): EventSettings {
-  // Converte Date para string no formato HH:MM
+  // Converte Date para string no formato HH:MM usando UTC para evitar problemas de timezone
   const timeString = tea.time instanceof Date 
-    ? `${String(tea.time.getHours()).padStart(2, '0')}:${String(tea.time.getMinutes()).padStart(2, '0')}`
+    ? `${String(tea.time.getUTCHours()).padStart(2, '0')}:${String(tea.time.getUTCMinutes()).padStart(2, '0')}`
     : String(tea.time);
 
   // Converte YYYY-MM-DD para DD/MM/YYYY

@@ -91,8 +91,8 @@ export async function getTeaCompleteData(teaId: string): Promise<TeaCompleteData
 
   // Formatar o time para HH:MM
   const formatTime = (time: Date): string => {
-    const hours = String(time.getHours()).padStart(2, "0");
-    const minutes = String(time.getMinutes()).padStart(2, "0");
+    const hours = String(time.getUTCHours()).padStart(2, "0");
+    const minutes = String(time.getUTCMinutes()).padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 

@@ -6,8 +6,9 @@ export function normalizeDateTime(date: string, time: string | Date): Date {
   // Se time é uma string no formato HH:MM
   if (typeof time === "string" && /^\d{2}:\d{2}$/.test(time)) {
     const [hours, minutes] = time.split(":").map(Number);
-    const dateTime = new Date(date);
-    dateTime.setHours(hours, minutes, 0, 0);
+    // Cria uma string ISO no formato YYYY-MM-DDTHH:MM:SS e cria Date em UTC
+    // Isso garante que o horário seja salvo exatamente como informado, sem conversão de timezone
+    const dateTime = new Date(`${date}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00Z`);
     return dateTime;
   }
 

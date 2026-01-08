@@ -29,10 +29,10 @@ export async function getTeaPublic(teaId: string): Promise<PublicTea | null> {
     return null;
   }
 
-  // Formatar o time para HH:MM para evitar problemas de hidratação
+  // Formatar o time para HH:MM usando UTC para evitar problemas de timezone
   const formatTime = (time: Date): string => {
-    const hours = String(time.getHours()).padStart(2, "0");
-    const minutes = String(time.getMinutes()).padStart(2, "0");
+    const hours = String(time.getUTCHours()).padStart(2, "0");
+    const minutes = String(time.getUTCMinutes()).padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
