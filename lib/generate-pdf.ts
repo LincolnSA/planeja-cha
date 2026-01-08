@@ -6,6 +6,7 @@
  */
 
 import type { TeaCompleteData } from "@/actions/tea/get-tea-complete-data";
+import type { GuestListItem } from "@/actions/guest/get-guests";
 
 export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
   try {
@@ -181,6 +182,121 @@ export async function generateTeaPDF(data: TeaCompleteData): Promise<void> {
 
     // Salvar o PDF
     const fileName = `cha-de-bebe-${data.name.replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().split("T")[0]}.pdf`;
+    doc.save(fileName);
+  } catch (error) {
+    // Se jsPDF não estiver instalado, mostrar mensagem
+    if (error instanceof Error && error.message.includes("Cannot find module")) {
+      throw new Error("Biblioteca jsPDF não encontrada. Execute: yarn add jspdf");
+    }
+    throw error;
+  }
+}
+
+/**
+ * Função para gerar PDF com lista de convidados e acompanhantes em ordem alfabética
+ * 
+ * IMPORTANTE: Para usar esta função, instale a biblioteca jsPDF:
+ * yarn add jspdf
+ */
+export async function generateGuestsListPDF(
+  eventName: string,
+  parentsName: string,
+  guests: GuestListItem[]
+): Promise<void> {
+  try {
+    // Tentar importar jsPDF dinamicamente
+    const { jsPDF } = await import("jspdf");
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let yPosition = 20;
+    const margin = 20;
+    const lineHeight = 7;
+    const sectionSpacing = 10;
+
+    // Cores
+    const primaryColor: [number, number, number] = [120, 97, 76]; // #78614C
+    const textColor: [number, number, number] = [0, 0, 0];
+    const grayColor: [number, number, number] = [107, 114, 128];
+
+    // Título principal
+    doc.setFontSize(24);
+    doc.setTextColor(...primaryColor);
+    doc.setFont("helvetica", "bold");
+    doc.text(eventName, margin, yPosition);
+    yPosition += lineHeight + 2;
+
+    doc.setFontSize(12);
+    doc.setTextColor(...grayColor);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Organizado por: ${parentsName}`, margin, yPosition);
+    yPosition += sectionSpacing + lineHeight;
+
+    // Título da lista
+    doc.setFontSize(18);
+    doc.setTextColor(...textColor);
+    doc.setFont("helvetica", "bold");
+    doc.text("Lista de Convidados e Acompanhantes", margin, yPosition);
+    yPosition += lineHeight + 4;
+
+    // Coletar todos os nomes (convidados + acompanhantes)
+    const allNames: string[] = [];
+    
+    guests.forEach((guest) => {
+      allNames.push(guest.name);
+      guest.companions.forEach((companion) => {
+        allNames.push(companion);
+      });
+    });
+
+    // Ordenar alfabeticamente (case-insensitive)
+    allNames.sort((a, b) => {
+      return a.localeCompare(b, "pt-BR", { sensitivity: "base" });
+    });
+
+    // Calcular totais
+    const totalGuests = guests.length;
+    const totalCompanions = guests.reduce((sum, guest) => sum + guest.companions.length, 0);
+    const totalPeople = allNames.length;
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...grayColor);
+    doc.text(`Total: ${totalPeople} pessoas (${totalGuests} convidados + ${totalCompanions} acompanhantes)`, margin, yPosition);
+    yPosition += lineHeight + sectionSpacing;
+
+    // Lista de nomes em ordem alfabética
+    doc.setFontSize(11);
+    doc.setTextColor(...textColor);
+    doc.setFont("helvetica", "normal");
+
+    allNames.forEach((name, index) => {
+      // Verificar se precisa de nova página
+      if (yPosition > pageHeight - 30) {
+        doc.addPage();
+        yPosition = 20;
+      }
+
+      doc.text(`${index + 1}. ${name}`, margin, yPosition);
+      yPosition += lineHeight;
+    });
+
+    // Rodapé
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(...grayColor);
+      doc.text(
+        `Página ${i} de ${totalPages} - Gerado em ${new Date().toLocaleDateString("pt-BR")}`,
+        pageWidth / 2,
+        pageHeight - 10,
+        { align: "center" }
+      );
+    }
+
+    // Salvar o PDF
+    const fileName = `lista-convidados-${eventName.replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().split("T")[0]}.pdf`;
     doc.save(fileName);
   } catch (error) {
     // Se jsPDF não estiver instalado, mostrar mensagem

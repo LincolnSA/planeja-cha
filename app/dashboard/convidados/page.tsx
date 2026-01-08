@@ -12,7 +12,9 @@ import { getGuestById, getGuests } from "@/actions/guest";
 import type { GuestDetails, GuestListItem } from "@/actions/guest";
 import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, FileDown } from "lucide-react";
+import { generateGuestsListPDF } from "@/lib/generate-pdf";
 
 export default function GuestsPage() {
   const eventContext = useContext(EventContext);
@@ -23,6 +25,7 @@ export default function GuestsPage() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<GuestDetails | null>(null);
   const [isLoadingGuest, setIsLoadingGuest] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const { showToast } = useToast();
 
   // Obter o evento atual (pode ser null)
@@ -124,6 +127,99 @@ export default function GuestsPage() {
     }
   };
 
+  const handleCopyGuestInfo = async (guestId: string) => {
+    try {
+      const guestDetails = await getGuestById(guestId);
+      
+      if (!guestDetails) {
+        showToast("Erro ao carregar informações do convidado.", "error");
+        return;
+      }
+
+      let text = `🎉 Confirmação de Presença\n\n`;
+      text += `Evento: ${currentEvent.eventName}\n`;
+      text += `Organizado por: ${currentEvent.parentsName}\n`;
+      text += `Convidado: ${guestDetails.name}\n`;
+      
+      if (guestDetails.companions.length > 0) {
+        text += `Acompanhantes: ${guestDetails.companions.map(c => c.name).join(", ")}\n`;
+      }
+      
+      text += `\n📅 Data: ${currentEvent.date} às ${currentEvent.time}\n`;
+      text += `📍 Local: ${currentEvent.location}\n\n`;
+
+      // Adicionar presentes da lista
+      const allGifts: Array<{ title: string; description?: string; isCustom?: boolean }> = [];
+      
+      guestDetails.giftSelections.forEach((selection) => {
+        allGifts.push({
+          title: selection.gift.title,
+          description: selection.gift.description,
+          isCustom: false,
+        });
+      });
+
+      // Adicionar presentes customizados
+      guestDetails.customGifts.forEach((customGift) => {
+        allGifts.push({
+          title: customGift.title,
+          description: customGift.description || undefined,
+          isCustom: true,
+        });
+      });
+
+      if (allGifts.length > 0) {
+        text += `🎁 Presentes Escolhidos:\n`;
+        allGifts.forEach((gift, index) => {
+          text += `${index + 1}. ${gift.title}`;
+          if (gift.description) {
+            text += ` - ${gift.description}`;
+          }
+          if (gift.isCustom) {
+            text += ` (Personalizado)`;
+          }
+          text += `\n`;
+        });
+      }
+
+      await navigator.clipboard.writeText(text);
+      showToast("Informações copiadas para a área de transferência!", "success");
+    } catch (error) {
+      showToast("Erro ao copiar informações.", "error");
+      console.error("Erro ao copiar:", error);
+    }
+  };
+
+  const handleGenerateGuestsListPDF = async () => {
+    if (!currentEvent) {
+      showToast("Nenhum chá selecionado", "error");
+      return;
+    }
+
+    if (guests.length === 0) {
+      showToast("Não há convidados para gerar a lista.", "error");
+      return;
+    }
+
+    try {
+      setIsGeneratingPDF(true);
+      await generateGuestsListPDF(
+        currentEvent.eventName,
+        currentEvent.parentsName,
+        guests
+      );
+      showToast("PDF gerado com sucesso!", "success");
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Erro ao gerar PDF. Verifique se a biblioteca jsPDF está instalada.";
+      showToast(errorMessage, "error");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -155,10 +251,24 @@ export default function GuestsPage() {
         totalPeople={totalPeople}
       />
 
+      {/* Botão para gerar PDF */}
+      <div className="flex justify-end">
+        <Button
+          onClick={handleGenerateGuestsListPDF}
+          disabled={isGeneratingPDF || guests.length === 0}
+          className="bg-orange-600 hover:bg-orange-700 text-white"
+          title="Gerar PDF com lista de convidados e acompanhantes em ordem alfabética"
+        >
+          <FileDown className="mr-2 h-4 w-4" />
+          {isGeneratingPDF ? "Gerando PDF..." : "Gerar Lista em PDF"}
+        </Button>
+      </div>
+
       <GuestsTable
         guests={filteredGuests.map((item) => item.guest)}
         matchTypes={filteredGuests.map((item) => item.matchType)}
         onView={handleViewGuest}
+        onCopy={handleCopyGuestInfo}
       />
 
       <GuestDetailsModal
